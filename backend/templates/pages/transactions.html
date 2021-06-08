@@ -1,0 +1,25 @@
+{% extends "layout.html" %}
+{% block content %}
+	<div class="row">
+		<div class="col-12">
+			<h1 class="h3 mb-3 text-gray-800">Recent transactions</h1>
+
+			{% for transaction in transactions %}
+				<div class="mb-3">
+					<div>
+						<a href="#">{{ transaction.txid }}</a>
+					</div>
+					<div>
+						{{ transaction.amount }} RPD {% if transaction.is_reward %}REWARD{% endif %}
+					</div>
+					<div>
+						#{{ transaction.block.height }}
+					</div>
+					<div>
+						{{ transaction.block.created }}
+					</div>
+				</div>
+			{% endfor %}
+		</div>
+	</div>
+{% endblock content %}

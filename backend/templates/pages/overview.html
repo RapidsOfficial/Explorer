@@ -1,0 +1,22 @@
+{% extends "layout.html" %}
+{% block content %}
+	<div class="row">
+		<div class="col-12">
+			<h1 class="h3 mb-3 text-gray-800">Recent blocks</h1>
+
+			{% for block in blocks %}
+				<div class="mb-3">
+					<div>
+						<a href="#">{{ block.blockhash }}</a>
+					</div>
+					<div>
+						#{{ block.height }}
+					</div>
+					<div>
+						{{ block.created }}
+					</div>
+				</div>
+			{% endfor %}
+		</div>
+	</div>
+{% endblock content %}
