@@ -213,7 +213,8 @@ class Transaction(db.Entity):
 class Address(db.Entity):
     _table_ = "chain_addresses"
 
-    # ToDo: Received/Sent
+    # ToDo: Created/last active
+    # ToDo: POS info
 
     address = orm.Required(str, index=True)
     outputs = orm.Set("Output")
@@ -227,6 +228,8 @@ class Address(db.Entity):
 
 class Balance(db.Entity):
     _table_ = "chain_address_balance"
+
+    # ToDo: Received/Sent
 
     balance = orm.Required(float, default=0)
     address = orm.Required("Address")

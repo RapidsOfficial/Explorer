@@ -1,0 +1,75 @@
+{% extends "layout.html" %}
+{% block content %}
+	<div class="row">
+		<div class="col-12">
+			<h1 class="h3 mb-3 text-gray-800">Address</h1>
+
+			<div id="address-info-table">
+				<div class="card mb-3">
+					<div class="table-responsive">
+						<table class="table table-borderless table-md table-striped mb-0">
+							<tbody>
+								<tr>
+									<td>Address</td>
+									<td>
+										{{ address.address }}
+									</td>
+								</tr>
+								<!-- <tr>
+									<td>Received</td>
+									<td>
+										<span class="text-monospace">166473963.799</span> <b>MBC</b>
+									</td>
+								</tr>
+								<tr>
+									<td>Balance</td>
+									<td>
+										<span class="text-monospace">191386.4398</span> <b>MBC</b>
+									</td>
+								</tr> -->
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+
+			{% for transaction in address.transactions %}
+				<div class="card mb-3">
+					<div class="card-header">
+						<a href="/transaction/{{ transaction.txid }}">{{ transaction.txid }}</a>
+					</div>
+					<div class="card-body">
+						<div class="row">
+							<div class="col-md-6 col-sm-12 transaction-from">
+								<span>From:</span>
+								<ul class="list-flat mt-1">
+									{% for vin in transaction.vin %}
+										<li>
+											<a href="/address/{{ vin.vout.address.address }}">{{ vin.vout.address.address }}</a>
+											<div>
+												<b>{{ vin.vout.amount }} RPD</b>
+											</div>
+										</li>
+									{% endfor %}
+								</ul>
+							</div>
+							<div class="col-md-6 col-sm-12 transaction-to">
+								<span>To:</span>
+								<ul class="list-flat mt-1">
+									{% for vout in transaction.vout %}
+										<li>
+											<a href="/address/{{ vout.address.address }}">{{ vout.address.address }}</a>
+											<div>
+												<b>{{ vout.amount }} RPD</b>
+											</div>
+										</li>
+									{% endfor %}
+								</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+			{% endfor %}
+		</div>
+	</div>
+{% endblock content %}

@@ -10,7 +10,7 @@ blueprint = Blueprint("frontend", __name__)
 @blueprint.route("/")
 @orm.db_session
 def home():
-    blocks = BlockService.blocks(size=10)
+    blocks = BlockService.blocks(size=100)
     return render_template("pages/overview.html", blocks=blocks)
 
 @blueprint.route("/block/<string:blockhash>")
@@ -22,7 +22,7 @@ def block(blockhash):
 @blueprint.route("/transactions")
 @orm.db_session
 def transactions():
-    transactions = TransactionService.transactions(size=10)
+    transactions = TransactionService.transactions(size=100)
     return render_template("pages/transactions.html", transactions=transactions)
 
 @blueprint.route("/transaction/<string:txid>")
@@ -30,6 +30,12 @@ def transactions():
 def transaction(txid):
     transaction = TransactionService.get_by_txid(txid)
     return render_template("pages/transaction.html", transaction=transaction)
+
+@blueprint.route("/address/<string:address>")
+@orm.db_session
+def address(address):
+    address = AddressService.get_by_address(address)
+    return render_template("pages/address.html", address=address)
 
 @blueprint.route("/masternodes")
 def masternodes():
