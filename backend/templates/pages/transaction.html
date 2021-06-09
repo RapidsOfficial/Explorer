@@ -1,0 +1,45 @@
+{% extends "layout.html" %}
+{% block content %}
+	{% if transaction %}
+		<h1>Transaction</h1>
+
+		<div id="tx-info-table">
+			<div class="card mb-3">
+				<div class="table-responsive">
+					<table class="table table-borderless table-md table-striped mb-0">
+						<tbody>
+							<tr>
+								<td>Transaction Hash</td>
+								<td id="tx-info-hash" data-tx-info-hash="{{ transaction.txid }}">{{ transaction.txid }}</td>
+							</tr>
+							
+								<tr>
+									<td>Timestamp</td>
+									<td>{{ transaction.block.created }} (<b>{{ transaction.block.timestamp }}</b>)</td>
+								</tr>
+							
+							<tr>
+								<td>Height</td>
+								<td>
+									<a href="/block/{{ transaction.block.blockhash }}">{{ transaction.block.height }}</a> (<b>Confirmations {{ transaction.block.confirmations }}</b>)
+								</td>
+							</tr>
+							<tr>
+								<td>Amount Transferred</td>
+								<td>
+									<span>{{ transaction.amount }}</span> <b>RPD</b>
+								</td>
+							</tr>
+							<tr>
+								<td>Size</td>
+								<td>{{ transaction.size }} Bytes</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	{% else %}
+		Transaction not found
+	{% endif %}
+{% endblock content %}

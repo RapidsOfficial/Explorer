@@ -25,6 +25,12 @@ def transactions():
     transactions = TransactionService.transactions(size=10)
     return render_template("pages/transactions.html", transactions=transactions)
 
+@blueprint.route("/transaction/<string:txid>")
+@orm.db_session
+def transaction(txid):
+    transaction = TransactionService.get_by_txid(txid)
+    return render_template("pages/transaction.html", transaction=transaction)
+
 @blueprint.route("/masternodes")
 def masternodes():
     return render_template("layout.html")

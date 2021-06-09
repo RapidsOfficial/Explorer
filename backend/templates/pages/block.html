@@ -1,6 +1,8 @@
 {% extends "layout.html" %}
 {% block content %}
 	{% if block %}
+		<h1>Block</h1>
+
 		<div id="block-info-table">
 			<div class="card mb-3">
 				<div class="table-responsive">
@@ -60,13 +62,18 @@
 							</tr>
 							<tr>
 								<td>Transactions</td>
-								<td>1</td>
+								<td>{{ block.txcount }}</td>
 							</tr>
 						</tbody>
 					</table>
 				</div>
 			</div>
 		</div>
+		{% for transaction in block.transactions %}
+			<div class="mb-3">
+				<a href="/transaction/{{ transaction.txid }}">{{ transaction.txid }}</a>
+			</div>
+		{% endfor %}
 	{% else %}
 		Block not found
 	{% endif %}
