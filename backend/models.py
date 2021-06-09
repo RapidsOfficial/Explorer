@@ -41,6 +41,22 @@ class Block(db.Entity):
     next_block = orm.Optional("Block")
 
     @property
+    def timestamp(self):
+        return int(self.created.timestamp())
+
+    @property
+    def txcount(self):
+        return len(self.transactions)
+
+    @property
+    def confirmations(self):
+        latest_blocks = Block.select().order_by(
+            orm.desc(Block.height)
+        ).first()
+
+        return latest_blocks.height - self.height + 1
+
+    @property
     def rewards(self):
         reward = 0
         dev = 0

@@ -1,0 +1,73 @@
+{% extends "layout.html" %}
+{% block content %}
+	{% if block %}
+		<div id="block-info-table">
+			<div class="card mb-3">
+				<div class="table-responsive">
+					<table class="table table-borderless table-md table-striped mb-0">
+						<tbody>
+							<tr>
+								<td>Height</td>
+								<td id="block-info-height" data-block-info-height="{{ block.height }}">{{ block.height }} (<b>Confirmations {{ block.confirmations }}</b>)</td>
+							</tr>
+							<tr>
+								<td>Timestamp</td>
+								<td>{{ block.created }} (<b>{{ block.timestamp }}</b>)</td>
+							</tr>
+							<tr>
+								<td>Block Hash</td>
+								<td id="block-info-hash" data-block-info-hash="{{ block.blockhash }}">{{ block.blockhash }}</td>
+							</tr>
+							<tr>
+								<td>Previous Block</td>
+
+								{% if block.previous_block %}
+									<td>
+										<a href="/block/{{ block.previous_block.blockhash }}">{{ block.previous_block.blockhash }}</a>
+									</td>
+								{% else%}
+									<td>
+										<b>Genesis block</b>
+									</td>
+								{% endif %}
+							</tr>
+							<tr>
+								<td>Next Block</td>
+
+								{% if block.next_block %}
+									<td>
+										<a href="/block/{{ block.next_block.blockhash }}">{{ block.next_block.blockhash }}</a>
+									</td>
+								{% else%}
+									<td>
+										<b>This is latest block</b>
+									</td>
+								{% endif %}
+							</tr>
+							<tr>
+								<td>Merkle Root</td>
+								<td>
+									{{ block.merkleroot }}
+								</td>
+							</tr>
+							<tr>
+								<td>Size</td>
+								<td>{{ block.size }} Bytes</td>
+							</tr>
+							<tr>
+								<td>Version</td>
+								<td>{{ block.version }}</td>
+							</tr>
+							<tr>
+								<td>Transactions</td>
+								<td>1</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	{% else %}
+		Block not found
+	{% endif %}
+{% endblock content %}
