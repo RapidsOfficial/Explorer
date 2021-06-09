@@ -41,6 +41,11 @@ class Block(db.Entity):
     next_block = orm.Optional("Block")
 
     @property
+    def txs(self):
+        transactions = self.transactions.order_by(1)
+        return transactions
+
+    @property
     def timestamp(self):
         return int(self.created.timestamp())
 
@@ -114,6 +119,16 @@ class Transaction(db.Entity):
     inputs = orm.Set("Input")
 
     addresses = orm.Set("Address")
+
+    @property
+    def vin(self):
+        inputs = self.inputs.order_by(-1)
+        return inputs
+
+    @property
+    def vout(self):
+        outputs = self.outputs.order_by(-1)
+        return outputs
 
     @property
     def is_reward(self):
