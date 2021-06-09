@@ -22,7 +22,7 @@ class Block(db.Entity):
     _table_ = "chain_blocks"
 
     blockhash = orm.Required(str, index=True)
-    height = orm.Required(int, index=True)
+    height = orm.Required(int, size=64, index=True)
     bits = orm.Required(int, size=64)
     created = orm.Required(datetime)
     merkleroot = orm.Required(str)

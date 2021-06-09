@@ -30,16 +30,17 @@ class BlockService(object):
         return Block.get(blockhash=bhash)
 
     @classmethod
+    def get_by_height(cls, height):
+        try:
+            return Block.get(height=height)
+        except ValueError:
+            return None
+
+    @classmethod
     def blocks(cls, page=1, size=100):
         return Block.select().order_by(
             orm.desc(Block.height)
         ).page(page, pagesize=size)
-
-    @classmethod
-    def chart(cls):
-        query = orm.select((b.height, len(b.transactions)) for b in Block)
-        query = query.order_by(-1)
-        return query[:1440]
 
 class TransactionService(object):
     @classmethod
@@ -83,10 +84,10 @@ class InputService(object):
 
 class AddressService(object):
     @classmethod
-    def get_by_address(cls, script):
+    def get_by_address(cls, script, create=False):
         address = Address.get(address=script)
 
-        if not address:
+        if not address and create:
             address = AddressService.create(script)
 
         return address

@@ -143,7 +143,7 @@ def sync_blocks():
                 # ToDo: Add token support here
 
                 script = vout["address"]
-                address = AddressService.get_by_address(script)
+                address = AddressService.get_by_address(script, True)
                 address.transactions.add(transaction)
 
                 output = OutputService.create(
