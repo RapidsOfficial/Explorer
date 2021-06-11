@@ -21,7 +21,9 @@
 							<tr>
 								<td>Height</td>
 								<td>
-									<a href="/block/{{ transaction.block.blockhash }}">{{ transaction.block.height }}</a> (<b>Confirmations {{ transaction.block.confirmations }}</b>)
+									<a href="{{ url_for('frontend.block', blockhash=transaction.block.blockhash) }}">
+										{{ transaction.block.height }}
+									</a> (<b>Confirmations {{ transaction.block.confirmations }}</b>)
 								</td>
 							</tr>
 							<tr>

@@ -25,7 +25,9 @@
 
 								{% if block.previous_block %}
 									<td>
-										<a href="/block/{{ block.previous_block.blockhash }}">{{ block.previous_block.blockhash }}</a>
+										<a href="{{ url_for('frontend.block', blockhash=block.previous_block.blockhash) }}">
+											{{ block.previous_block.blockhash }}
+										</a>
 									</td>
 								{% else%}
 									<td>
@@ -38,7 +40,9 @@
 
 								{% if block.next_block %}
 									<td>
-										<a href="/block/{{ block.next_block.blockhash }}">{{ block.next_block.blockhash }}</a>
+										<a href="{{ url_for('frontend.block', blockhash=block.next_block.blockhash) }}">
+											{{ block.next_block.blockhash }}
+										</a>
 									</td>
 								{% else%}
 									<td>
@@ -72,7 +76,9 @@
 		{% for transaction in transactions %}
 			<div class="card mb-3">
 				<div class="card-header">
-					<a href="/transaction/{{ transaction.txid }}">{{ transaction.txid }}</a>
+					<a href="{{ url_for('frontend.transaction', txid=transaction.txid) }}">
+						{{ transaction.txid }}
+					</a>
 				</div>
 				<div class="card-body">
 					{% include "details.html" %}

@@ -19,7 +19,7 @@
 							{% for transaction in transactions %}
 								<tr>
 									<td>
-										<a href="/transaction/{{ transaction.block.blockhash }}">
+										<a href="{{ url_for('frontend.transaction', txid=transaction.txid) }}">
 											{{ transaction.block.height }}
 										</a>
 									</td>
@@ -27,7 +27,7 @@
 										{{ transaction.block.created }}
 									</td>
 									<td>
-										<a href="/transaction/{{ transaction.txid }}">
+										<a href="{{ url_for('frontend.transaction', txid=transaction.txid) }}">
 											{{ transaction.txid }}
 										</a>
 									</td>

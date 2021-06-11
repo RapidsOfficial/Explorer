@@ -19,7 +19,7 @@
 							{% for block in blocks %}
 								<tr data-height="{{ block.height }}">
 									<td>
-										<a href="/block/{{ block.blockhash }}">
+										<a href="{{ url_for('frontend.block', blockhash=block.blockhash) }}">
 											{{ block.height }}
 										</a>
 									</td>
@@ -27,7 +27,7 @@
 										{{ block.created }}
 									</td>
 									<td>
-										<a href="/block/{{ block.blockhash }}">
+										<a href="{{ url_for('frontend.block', blockhash=block.blockhash) }}">
 											{{ block.blockhash }}
 										</a>
 									</td>

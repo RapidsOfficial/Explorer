@@ -1,9 +1,9 @@
 <div class="container">
 	<div class="row">
 		<div class="col-12 mb-3 mt-3 text-center nav-links">
-			<a href="/">Overview</a>
-			<a href="/transactions">Transactions</a>
-			<a href="/holders">Richlist</a>
+			<a href="{{ url_for('frontend.home') }}">Overview</a>
+			<a href="{{ url_for('frontend.transactions') }}">Transactions</a>
+			<a href="{{ url_for('frontend.holders') }}">Richlist</a>
 			<a href="/">Network</a>
 			<a href="/">API</a>
 		</div>

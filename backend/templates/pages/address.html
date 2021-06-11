@@ -33,7 +33,9 @@
 				{% for transaction in transactions %}
 					<div class="card mb-3">
 						<div class="card-header">
-							<a href="/transaction/{{ transaction.txid }}">{{ transaction.txid }}</a>
+							<a href="{{ url_for('frontend.transaction', txid=transaction.txid) }}">
+								{{ transaction.txid }}
+							</a>
 						</div>
 						<div class="card-body">
 							{% include "details.html" %}

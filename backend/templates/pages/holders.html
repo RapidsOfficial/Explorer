@@ -21,7 +21,7 @@
 										{{ entry.index }}
 									</td>
 									<td>
-										<a href="/address/{{ entry.address }}">
+										<a href="{{ url_for('frontend.address', address=entry.address) }}">
 											{{ entry.address }}
 										</a>
 									</td>
