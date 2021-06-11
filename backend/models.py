@@ -121,14 +121,65 @@ class Transaction(db.Entity):
     addresses = orm.Set("Address")
 
     @property
+    def fee(self):
+        if not self.coinbase and not self.coinstake:
+            return round(
+                sum(
+                    i.vout.amount for i in self.inputs
+                ) - sum(
+                    o.amount for o in self.outputs
+                ), DECIMALS
+            )
+
+        return 0
+
+    @property
     def vin(self):
         inputs = self.inputs.order_by(-1)
         return inputs
 
     @property
+    def simple_vin(self):
+        result = []
+        tmp = {}
+
+        for vin in self.vin:
+            if vin.vout.address not in tmp:
+                tmp[vin.vout.address] = 0
+
+            tmp[vin.vout.address] += vin.vout.amount
+
+        for address in tmp:
+            result.append({
+                "address": address,
+                "amount": tmp[address]
+            })
+
+        return result
+
+    @property
     def vout(self):
         outputs = self.outputs.order_by(-1)
         return outputs
+
+    @property
+    def simple_vout(self):
+        result = []
+        tmp = {}
+
+        for vout in self.vout:
+            if vout.address not in tmp:
+                tmp[vout.address] = 0
+
+            tmp[vout.address] += vout.amount
+
+        for address in tmp:
+            result.append({
+                "address": address,
+                "amount": tmp[address]
+            })
+
+        return result
 
     @property
     def is_reward(self):
@@ -225,6 +276,15 @@ class Address(db.Entity):
     )
 
     balances = orm.Set("Balance")
+
+    @property
+    def txcount(self):
+        return len(self.transactions)
+
+    @property
+    def txs(self):
+        transactions = self.transactions.order_by(1)
+        return transactions
 
 class Balance(db.Entity):
     _table_ = "chain_address_balance"

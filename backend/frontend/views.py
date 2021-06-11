@@ -86,11 +86,28 @@ def transaction(txid):
     transaction = TransactionService.get_by_txid(txid)
     return render_template("pages/transaction.html", transaction=transaction)
 
-@blueprint.route("/address/<string:address>")
+@blueprint.route("/address/<string:address>", defaults={"page": 1})
+@blueprint.route("/address/<string:address>/<int:page>")
 @orm.db_session
-def address(address):
+def address(address, page):
     address = AddressService.get_by_address(address)
-    return render_template("pages/address.html", address=address)
+
+    # ToDo: transactions pagination
+
+    size = 10
+    transactions = address.txs.page(page, pagesize=size)
+
+    total = math.ceil(address.txcount / size)
+    pagination = utils.pagination(
+        "frontend.address", page,
+        size, total
+    )
+
+    return render_template(
+        "pages/address.html", address=address,
+        transactions=transactions,
+        pagination=pagination
+    )
 
 @blueprint.route("/search")
 @use_args(search_args, location="query")
@@ -111,10 +128,6 @@ def search(args):
             return redirect(url_for("frontend.address", address=args["query"]))
 
     return redirect(url_for("frontend.home"))
-
-@blueprint.route("/masternodes")
-def masternodes():
-    return render_template("layout.html")
 
 @blueprint.route("/holders", defaults={"page": 1})
 @blueprint.route("/holders/<int:page>")
@@ -142,6 +155,10 @@ def holders(page):
         "pages/holders.html", richlist=richlist,
         pagination=pagination
     )
+
+@blueprint.route("/masternodes")
+def masternodes():
+    return render_template("layout.html")
 
 @blueprint.route("/network")
 def network():

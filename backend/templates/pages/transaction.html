@@ -34,6 +34,12 @@
 								<td>Size</td>
 								<td>{{ transaction.size }} Bytes</td>
 							</tr>
+							{% if transaction.fee > 0 %}
+								<tr>
+									<td>Fee</td>
+									<td>{{ transaction.fee }} RPD</td>
+								</tr>
+							{% endif %}
 						</tbody>
 					</table>
 				</div>
@@ -42,34 +48,7 @@
 
 		<div class="card">
 			<div class="card-body">
-				<div class="row">
-					<div class="col-md-6 col-sm-12 transaction-from">
-						<span>From:</span>
-						<ul class="list-flat mt-1">
-							{% for vin in transaction.vin %}
-								<li>
-									<a href="/address/{{ vin.vout.address.address }}">{{ vin.vout.address.address }}</a>
-									<div>
-										<b>{{ vin.vout.amount }} RPD</b>
-									</div>
-								</li>
-							{% endfor %}
-						</ul>
-					</div>
-					<div class="col-md-6 col-sm-12 transaction-to">
-						<span>To:</span>
-						<ul class="list-flat mt-1">
-							{% for vout in transaction.vout %}
-								<li>
-									<a href="/address/{{ vout.address.address }}">{{ vout.address.address }}</a>
-									<div>
-										<b>{{ vout.amount }} RPD</b>
-									</div>
-								</li>
-							{% endfor %}
-						</ul>
-					</div>
-				</div>
+				{% include "details.html" %}
 			</div>
 		</div>
 	{% else %}

@@ -16,63 +16,54 @@
 											{{ address.address }}
 										</td>
 									</tr>
-									<!-- <tr>
-										<td>Received</td>
-										<td>
-											<span class="text-monospace">166473963.799</span> <b>MBC</b>
-										</td>
-									</tr>
-									<tr>
-										<td>Balance</td>
-										<td>
-											<span class="text-monospace">191386.4398</span> <b>MBC</b>
-										</td>
-									</tr> -->
+									{% for balance in address.balances %}
+										<tr>
+											<td>Balance {{ balance.currency }}</td>
+											<td>
+												<span>{{ balance.balance }}</span> <b>{{ balance.currency }}</b>
+											</td>
+										</tr>
+									{% endfor %}
 								</tbody>
 							</table>
 						</div>
 					</div>
 				</div>
 
-				{% for transaction in address.transactions %}
+				{% for transaction in transactions %}
 					<div class="card mb-3">
 						<div class="card-header">
 							<a href="/transaction/{{ transaction.txid }}">{{ transaction.txid }}</a>
 						</div>
 						<div class="card-body">
-							<div class="row">
-								<div class="col-md-6 col-sm-12 transaction-from">
-									<span>From:</span>
-									<ul class="list-flat mt-1">
-										{% for vin in transaction.vin %}
-											<li>
-												<a href="/address/{{ vin.vout.address.address }}">{{ vin.vout.address.address }}</a>
-												<div>
-													<b>{{ vin.vout.amount }} RPD</b>
-												</div>
-											</li>
-										{% endfor %}
-									</ul>
-								</div>
-								<div class="col-md-6 col-sm-12 transaction-to">
-									<span>To:</span>
-									<ul class="list-flat mt-1">
-										{% for vout in transaction.vout %}
-											<li>
-												<a href="/address/{{ vout.address.address }}">{{ vout.address.address }}</a>
-												<div>
-													<b>{{ vout.amount }} RPD</b>
-												</div>
-											</li>
-										{% endfor %}
-									</ul>
-								</div>
-							</div>
+							{% include "details.html" %}
 						</div>
 					</div>
 				{% endfor %}
 			</div>
 		</div>
+
+		{% if pagination %}
+			{% if pagination.pages|length > 1 %}
+				{% if pagination.previous %}
+					<a href="{{ url_for(pagination.url, page=pagination.previous, address=address.address) }}" class="button">
+						<i class="fas fa-fw fa-chevron-left"></i>
+					</a>
+				{% endif %}
+
+				{% for page in pagination.pages %}
+					<a href="{{ url_for(pagination.url, page=page, address=address.address) }}" class="button {% if page == pagination.current %}active{% endif %} {% if page == pagination.current - 1 or page == pagination.current + 1 %}show-xs{% endif %}">
+						{{ page }}
+					</a>
+				{% endfor %}
+
+				{% if pagination.next %}
+					<a href="{{ url_for(pagination.url, page=pagination.next, address=address.address) }}" class="button">
+						<i class="fas fa-fw fa-chevron-right"></i>
+					</a>
+				{% endif %}
+			{% endif %}
+		{% endif %}
 	{% else %}
 		Address not found
 	{% endif %}
