@@ -97,7 +97,7 @@ class AddressService(object):
         return address
 
     @classmethod
-    def richlist(cls, page=1, currency=CURRENCY):
+    def richlist(cls, page=1, size=100, currency=CURRENCY):
         query = orm.select(
             (b.address, b.balance) for b in Balance
             if b.currency == currency and b.address.address != BURN_ADDRESS
@@ -105,7 +105,7 @@ class AddressService(object):
 
         query = query.order_by(-2)
 
-        return query.page(page, pagesize=100)
+        return query.page(page, pagesize=size)
 
     @classmethod
     def create(cls, address):

@@ -7,17 +7,17 @@ from flask import render_template
 from flask import Blueprint
 from pony import orm
 
-from .args import search_args, page_args
+from .args import search_args
 from .. import utils
 import math
 
 blueprint = Blueprint("frontend", __name__)
 
-@blueprint.route("/")
-@use_args(page_args, location="query")
+@blueprint.route("/", defaults={"page": 1})
+@blueprint.route("/<int:page>")
 @orm.db_session
-def home(args):
-    page, size = args["page"], 100
+def home(page):
+    size = 30
     latest = BlockService.latest_block()
     total = math.ceil(latest.height / size)
 
@@ -32,11 +32,11 @@ def home(args):
         blocks=blocks
     )
 
-@blueprint.route("/transactions")
-@use_args(page_args, location="query")
+@blueprint.route("/transactions", defaults={"page": 1})
+@blueprint.route("/transactions/<int:page>")
 @orm.db_session
-def transactions(args):
-    page, size = args["page"], 100
+def transactions(page):
+    size = 100
 
     transactions = TransactionService.transactions(page=page, size=size)
     count = TransactionService.count()
@@ -52,23 +52,24 @@ def transactions(args):
         transactions=transactions
     )
 
-@blueprint.route("/block/<string:blockhash>")
+@blueprint.route("/block/<string:blockhash>", defaults={"page": 1})
+@blueprint.route("/block/<string:blockhash>/<int:page>")
 @orm.db_session
-def block(blockhash):
-    page, size = 1, 10
-
+def block(blockhash, page):
+    size = 10
     block = BlockService.get_by_hash(blockhash)
     transactions = block.txs.page(page, pagesize=size)
 
-    # total = math.ceil(block.txcount / size)
-    # pagination = utils.pagination(
-    #     "frontend.home", page,
-    #     size, total
-    # )
+    total = math.ceil(block.txcount / size)
+    pagination = utils.pagination(
+        "frontend.block", page,
+        size, total
+    )
 
     return render_template(
         "pages/block.html", block=block,
-        transactions=transactions
+        transactions=transactions,
+        pagination=pagination
     )
 
 @blueprint.route("/height/<int:height>")
@@ -115,11 +116,32 @@ def search(args):
 def masternodes():
     return render_template("layout.html")
 
-@blueprint.route("/holders")
+@blueprint.route("/holders", defaults={"page": 1})
+@blueprint.route("/holders/<int:page>")
 @orm.db_session
-def holders():
-    richlist = AddressService.richlist()
-    return render_template("pages/holders.html", richlist=richlist)
+def holders(page):
+    total = 10
+    size = 100
+
+    addresses = AddressService.richlist(page, size)
+    richlist = []
+
+    pagination = utils.pagination(
+        "frontend.holders", page,
+        size, total
+    )
+
+    for index, entry in enumerate(addresses):
+        richlist.append({
+            "index": (index + 1) + ((page - 1) * size),
+            "address": entry[0].address,
+            "balance": float(entry[1])
+        })
+
+    return render_template(
+        "pages/holders.html", richlist=richlist,
+        pagination=pagination
+    )
 
 @blueprint.route("/network")
 def network():
