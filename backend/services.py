@@ -57,6 +57,10 @@ class TransactionService(object):
         )
 
     @classmethod
+    def count(cls):
+        return Transaction.select().count(distinct=False)
+
+    @classmethod
     def transactions(cls, page=1, currency=None, size=100):
         # query = orm.select((o.transaction, sum(o.amount), o.transaction.id) for o in Output if o.currency == currency).distinct()
         # query = query.order_by(-3)
