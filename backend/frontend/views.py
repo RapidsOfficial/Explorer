@@ -3,6 +3,7 @@ from webargs.flaskparser import use_args
 from ..services import AddressService
 from ..services import BlockService
 from flask import redirect, url_for
+from ..services import PeerService
 from flask import render_template
 from flask import Blueprint
 from pony import orm
@@ -161,8 +162,12 @@ def masternodes():
     return render_template("layout.html")
 
 @blueprint.route("/network")
+@orm.db_session
 def network():
-    return render_template("layout.html")
+    peers = PeerService.list(True)
+    return render_template(
+        "pages/peers.html", peers=peers
+    )
 
 @blueprint.route("/docs")
 def docs():

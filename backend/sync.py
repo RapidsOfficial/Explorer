@@ -7,6 +7,7 @@ from .services import OutputService
 from .services import InputService
 from .services import BlockService
 from .services import StatsService
+from .services import PeerService
 from .methods.block import Block
 from datetime import datetime
 from pony import orm
@@ -36,6 +37,35 @@ def rollback_blocks(height):
         orm.commit()
 
     log_message("Finised rollback")
+
+@orm.db_session
+def sync_peers():
+    peers = General.peers()
+
+    if peers["error"] is None:
+        knows_peers = PeerService.list()
+        for peer in knows_peers:
+            peer.active = False
+
+        for peer in peers["result"]:
+            address, port = peer["addr"].split(":")
+            version = peer["version"]
+            subver = peer["subver"]
+
+            if address[0] == "[":
+                continue
+
+            if not subver:
+                continue
+
+            if (knows_peer := PeerService.get_by_address(address)):
+                knows_peer.active = True
+
+            else:
+                # ToDo: get country here
+                PeerService.create(address, port, version, subver)
+
+        # ToDo: peer historical data
 
 @orm.db_session
 def sync_blocks():

@@ -64,3 +64,8 @@ class General():
     def masternodes(cls):
         data = utils.make_request("listmasternodes")
         return data
+
+    @classmethod
+    def peers(cls):
+        data = utils.make_request("getpeerinfo")
+        return data

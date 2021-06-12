@@ -14,9 +14,14 @@ class Peer(db.Entity):
     _table_ = "chain_peers"
 
     created = orm.Required(datetime, default=datetime.utcnow)
-    protocol = orm.Required(str)
-    version = orm.Required(str)
+    active = orm.Required(bool, default=False)
+    version = orm.Required(int)
     address = orm.Required(str)
+    subver = orm.Required(str)
+    port = orm.Required(int)
+
+    # ToDo: country?
+    # ToDo: location?
 
 class Block(db.Entity):
     _table_ = "chain_blocks"

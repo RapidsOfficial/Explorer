@@ -6,6 +6,7 @@ from .models import Output
 from .models import Input
 from .models import Block
 from .models import Stats
+from .models import Peer
 from pony import orm
 
 class BlockService(object):
@@ -72,11 +73,6 @@ class TransactionService(object):
         query = query.order_by(-1)
 
         return query.page(page, pagesize=size)
-
-    @classmethod
-    def total_transactions(cls, currency=CURRENCY):
-        query = orm.select((orm.count(o.transaction)) for o in Output if o.currency == currency).distinct()
-        return query.first()
 
 class InputService(object):
     @classmethod
@@ -153,3 +149,25 @@ class StatsService(object):
             )
 
         return entry
+
+class PeerService(object):
+    @classmethod
+    def list(cls, all_peers=False):
+        peers = Peer.select()
+
+        if not all_peers:
+            peers = peers.filter(lambda p: p.active is True)
+
+        return peers
+
+    @classmethod
+    def get_by_address(cls, address):
+        peer = Peer.get(address=address)
+        return peer
+
+    @classmethod
+    def create(cls, address, port, version, subver, active=True):
+        return Peer(
+            address=address, port=port, version=version,
+            subver=subver, active=active
+        )

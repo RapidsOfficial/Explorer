@@ -1,0 +1,33 @@
+{% extends "layout.html" %}
+{% block content %}
+	<div class="row">
+		<div class="col-12">
+			<h1 class="h3 mb-3 text-gray-800">Network peers</h1>
+
+			<div class="card mb-3">
+				<div class="table-responsive">
+					<table id="blocks-table" class="table table-borderless table-md table-striped text-center mb-0">
+						<thead>
+							<tr>
+								<th scope="col">Address</th>
+								<th scope="col">Balance</th>
+							</tr>
+						</thead>
+						<tbody>
+							{% for peer in peers %}
+								<tr>
+									<td>
+										{{ peer.address }}
+									</td>
+									<td>
+										{{ peer.subver }}
+									</td>
+								</tr>
+							{% endfor %}
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock content %}
