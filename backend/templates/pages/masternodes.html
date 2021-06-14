@@ -1,0 +1,41 @@
+{% extends "layout.html" %}
+{% block content %}
+	<div class="row">
+		<div class="col-12">
+			<h1 class="h3 mb-3 text-gray-800">Masternodes list</h1>
+
+			<div class="card mb-3">
+				<div class="table-responsive">
+					<table id="blocks-table" class="table table-borderless table-md table-striped text-center mb-0">
+						<thead>
+							<tr>
+								<th scope="col">Rank</th>
+								<th scope="col">Address</th>
+								<th scope="col">Status</th>
+								<th scope="col">Last paid</th>
+							</tr>
+						</thead>
+						<tbody>
+							{% for masternode in masternodes %}
+								<tr>
+									<td>
+										{{ masternode.rank }}
+									</td>
+									<td>
+										{{ masternode.address.address }}
+									</td>
+									<td>
+										{{ masternode.status }}
+									</td>
+									<td>
+										{{ masternode.lastpaid }}
+									</td>
+								</tr>
+							{% endfor %}
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock content %}

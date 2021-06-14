@@ -1,4 +1,5 @@
 from ..services import TransactionService
+from ..services import MasternodeService
 from webargs.flaskparser import use_args
 from ..services import AddressService
 from ..services import BlockService
@@ -93,6 +94,8 @@ def transaction(txid):
 def address(address, page):
     address = AddressService.get_by_address(address)
 
+    # ToDo: Add address validity check here
+
     # ToDo: transactions pagination
 
     size = 10
@@ -157,16 +160,20 @@ def holders(page):
         pagination=pagination
     )
 
-@blueprint.route("/masternodes")
-def masternodes():
-    return render_template("layout.html")
-
 @blueprint.route("/network")
 @orm.db_session
 def network():
     peers = PeerService.list(True)
     return render_template(
         "pages/peers.html", peers=peers
+    )
+
+@blueprint.route("/masternodes")
+@orm.db_session
+def masternodes():
+    masternodes = MasternodeService.list(True)
+    return render_template(
+        "pages/masternodes.html", masternodes=masternodes
     )
 
 @blueprint.route("/docs")
