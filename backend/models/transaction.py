@@ -7,6 +7,7 @@ class Transaction(db.Entity):
 
     coinstake = orm.Required(bool, default=False)
     coinbase = orm.Required(bool, default=False)
+    fee = orm.Required(float, default=0)
     txid = orm.Required(str, index=True)
     locktime = orm.Required(int)
     size = orm.Required(int)
@@ -16,21 +17,6 @@ class Transaction(db.Entity):
     inputs = orm.Set("Input")
 
     addresses = orm.Set("Address")
-
-    # ToDo: pre-calculate fee
-
-    @property
-    def fee(self):
-        if not self.coinbase and not self.coinstake:
-            return round(
-                sum(
-                    i.vout.amount for i in self.inputs
-                ) - sum(
-                    o.amount for o in self.outputs
-                ), DECIMALS
-            )
-
-        return 0
 
     @property
     def vin(self):
@@ -89,10 +75,11 @@ class Transaction(db.Entity):
         output_amount = 0
 
         if self.is_reward:
-            rewards = self.block.rewards
-            output_amount += (
-                rewards["reward"] + rewards["dev"] + rewards["mn"]
-            )
+            pass
+            # rewards = self.block.rewards
+            # output_amount += (
+            #     rewards["reward"] + rewards["dev"] + rewards["mn"]
+            # )
 
         else:
             for vout in self.outputs:

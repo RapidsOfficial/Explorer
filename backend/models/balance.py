@@ -5,9 +5,9 @@ from pony import orm
 class Balance(db.Entity):
     _table_ = "chain_address_balance"
 
-    # ToDo: Received/Sent
-
     balance = orm.Required(float, default=0)
+    received = orm.Required(float, default=0)
+    sent = orm.Required(float, default=0)
     address = orm.Required("Address")
     currency = orm.Required(str)
 
@@ -28,6 +28,7 @@ class Input(db.Entity):
         )
 
         balance.balance += self.vout.amount
+        balance.sent -= self.vout.amount
 
 class Output(db.Entity):
     _table_ = "chain_outputs"
@@ -53,8 +54,6 @@ class Output(db.Entity):
         )
 
         balance.balance -= self.amount
-
-        if self.vin:
-            self.vin.delete()
+        balance.received -= self.amount
 
     orm.composite_index(transaction, n)

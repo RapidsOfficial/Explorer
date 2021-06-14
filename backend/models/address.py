@@ -1,13 +1,15 @@
+from datetime import datetime
 from .base import db
 from pony import orm
 
 class Address(db.Entity):
     _table_ = "chain_addresses"
 
-    # ToDo: Created/last active
-    # ToDo: POS info
+    # ToDo: POS info?
 
     address = orm.Required(str, index=True)
+    lastactive = orm.Required(datetime)
+    created = orm.Required(datetime)
 
     transactions = orm.Set(
         "Transaction", table="chain_address_transactions",
@@ -20,7 +22,7 @@ class Address(db.Entity):
 
     @property
     def txcount(self):
-        return len(self.transactions)
+        return self.transactions.count()
 
     @property
     def txs(self):

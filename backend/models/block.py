@@ -1,7 +1,16 @@
-from ..constants import REDUCTION_HEIGHT, DECIMALS
+# from ..constants import REDUCTION_HEIGHT, DECIMALS
 from datetime import datetime
 from .base import db
 from pony import orm
+
+class Reward(db.Entity):
+    _table_ = "chain_block_rewards"
+
+    reward = orm.Required(float, default=0)
+    dev = orm.Required(float, default=0)
+    mn = orm.Required(float, default=0)
+
+    block = orm.Optional("Block")
 
 class Block(db.Entity):
     _table_ = "chain_blocks"
@@ -16,14 +25,10 @@ class Block(db.Entity):
     nonce = orm.Required(int)
     size = orm.Required(int)
 
-    # ToDo: Remove this
-    reward = orm.Required(float, default=0)
-    dev = orm.Required(float, default=0)
-    mn = orm.Required(float, default=0)
-
     previous_block = orm.Optional("Block")
     transactions = orm.Set("Transaction")
     next_block = orm.Optional("Block")
+    reward = orm.Required("Reward")
 
     @property
     def txs(self):
@@ -36,7 +41,7 @@ class Block(db.Entity):
 
     @property
     def txcount(self):
-        return len(self.transactions)
+        return self.transactions.count()
 
     @property
     def confirmations(self):
@@ -46,46 +51,46 @@ class Block(db.Entity):
 
         return latest_blocks.height - self.height + 1
 
-    @property
-    def rewards(self):
-        reward = 0
-        dev = 0
-        mn = 0
+    # @property
+    # def rewards(self):
+    #     reward = 0
+    #     dev = 0
+    #     mn = 0
 
-        transaction = self.transactions.select().first()
+    #     transaction = self.transactions.select().first()
 
-        if transaction.coinstake:
-            reward_address = None
+    #     if transaction.coinstake:
+    #         reward_address = None
 
-            for index, vout in enumerate(transaction.outputs.order_by(lambda o: o.n)):
-                if self.height > REDUCTION_HEIGHT and index == 0:
-                    dev += vout.amount
+    #         for index, vout in enumerate(transaction.outputs.order_by(lambda o: o.n)):
+    #             if self.height > REDUCTION_HEIGHT and index == 0:
+    #                 dev += vout.amount
 
-                else:
-                    if reward_address is None or reward_address == vout.address:
-                        reward_address = vout.address
-                        reward += vout.amount
+    #             else:
+    #                 if reward_address is None or reward_address == vout.address:
+    #                     reward_address = vout.address
+    #                     reward += vout.amount
 
-                if self.height > REDUCTION_HEIGHT:
-                    if index == len(transaction.outputs) - 1:
-                        mn += vout.amount
+    #             if self.height > REDUCTION_HEIGHT:
+    #                 if index == len(transaction.outputs) - 1:
+    #                     mn += vout.amount
 
-                    if index == len(transaction.outputs):
-                        dev += vout.amount
+    #                 if index == len(transaction.outputs):
+    #                     dev += vout.amount
 
-                else:
-                    if index == len(transaction.outputs):
-                        mn += vout.amount
+    #             else:
+    #                 if index == len(transaction.outputs):
+    #                     mn += vout.amount
 
-            for vin in transaction.inputs:
-                reward -= vin.vout.amount
+    #         for vin in transaction.inputs:
+    #             reward -= vin.vout.amount
 
-        else:
-            for vout in transaction.outputs:
-                reward += vout.amount
+    #     else:
+    #         for vout in transaction.outputs:
+    #             reward += vout.amount
 
-        return {
-            "reward": round(reward, DECIMALS),
-            "dev": round(dev, DECIMALS),
-            "mn": round(mn, DECIMALS)
-        }
+    #     return {
+    #         "reward": round(reward, DECIMALS),
+    #         "dev": round(dev, DECIMALS),
+    #         "mn": round(mn, DECIMALS)
+    #     }

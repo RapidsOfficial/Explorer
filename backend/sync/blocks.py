@@ -162,11 +162,9 @@ def sync_blocks():
 
         # ToDo: Count transactions here
 
-        # ToDo: Count addresses here?
+        # ToDo: Calculate fee
 
-        # ToDo: Store block tx count here
-
-        # ToDo: Decimals
+        # ToDo: Decimals?
 
         if non_reward_transactions > 0:
             transactions = StatsService.get_by_key("transactions")
