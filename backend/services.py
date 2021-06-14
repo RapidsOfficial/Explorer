@@ -231,6 +231,12 @@ class MasternodeService(object):
 
 class IntervalService(object):
     @classmethod
+    def get_by_time(cls, key, time):
+        return Interval.get(
+            key=key, time=time
+        )
+
+    @classmethod
     def latest(cls, key):
         return Interval.select(
             lambda i: i.key == key

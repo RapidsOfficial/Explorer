@@ -17,3 +17,10 @@ def datetime_round_day(timestamp):
         seconds=timestamp.second,
         microseconds=timestamp.microsecond
     )
+
+def datetime_round_minute5(timestamp):
+    return timestamp - timedelta(
+        minutes=timestamp.minute % 5,
+        seconds=timestamp.second,
+        microseconds=timestamp.microsecond
+    )

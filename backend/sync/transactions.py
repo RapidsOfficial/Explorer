@@ -6,7 +6,7 @@ from pony import orm
 from . import utils
 
 @orm.db_session
-def sync_transactions_chart():
+def sync_transactions():
     INTERVAL_KEY = "transactions"
 
     latest_inteval = IntervalService.latest(INTERVAL_KEY)
