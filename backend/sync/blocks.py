@@ -1,28 +1,18 @@
-from .constants import REDUCTION_HEIGHT, BURN_ADDRESS, CURRENCY
-from datetime import datetime, timedelta
-from .services import TransactionService
-from .services import MasternodeService
-from .methods.general import General
-from .services import BalanceService
-from .services import AddressService
-from .services import OutputService
-from .services import InputService
-from .services import BlockService
-from .services import StatsService
-from .services import PeerService
-from .methods.block import Block
+from ..constants import REDUCTION_HEIGHT, BURN_ADDRESS, CURRENCY
+from ..services import TransactionService
+from .utils import log_block, log_message
+from ..methods.general import General
+from ..services import BalanceService
+from ..services import AddressService
+from ..services import OutputService
+from ..services import InputService
+from ..services import BlockService
+from ..services import StatsService
+from ..methods.block import Block
+from datetime import datetime
 from pony import orm
+from .. import utils
 from . import parser
-from . import utils
-
-def log_block(message, block, tx=[]):
-    now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    time = block.created.strftime("%Y-%m-%d %H:%M:%S")
-    print(f"{now} {message}: hash={block.blockhash} height={block.height} tx={len(tx)} date='{time}'")
-
-def log_message(message):
-    now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    print(f"{now} {message}")
 
 @orm.db_session
 def rollback_blocks(height):
@@ -38,89 +28,6 @@ def rollback_blocks(height):
         orm.commit()
 
     log_message("Finised rollback")
-
-@orm.db_session
-def sync_peers():
-    peers = General.peers()
-
-    if peers["error"] is None:
-        total = len(peers["result"])
-
-        log_message(f"Syncing {total} peers")
-
-        knows_peers = PeerService.list()
-        for peer in knows_peers:
-            peer.active = False
-
-        for peer in peers["result"]:
-            address, port = peer["addr"].split(":")
-            version = peer["version"]
-            subver = peer["subver"]
-
-            if address[0] == "[":
-                continue
-
-            if not subver:
-                continue
-
-            if (known_peer := PeerService.get_by_address(address)):
-                known_peer.active = True
-
-            else:
-                known_peer = PeerService.create(address, port, version, subver)
-
-            if not known_peer.location:
-                if (location := utils.location(address)):
-                    PeerService.location(
-                        location["country"], location["lat"],
-                        location["lon"], location["city"],
-                        location["code"], known_peer
-                    )
-
-        # ToDo: peer historical data
-
-@orm.db_session
-def sync_masternodes():
-    masternodes = General.masternodes()
-
-    if masternodes["error"] is None:
-        total = len(masternodes["result"])
-
-        log_message(f"Syncing {total} masternodes")
-
-        knows_masternodes = MasternodeService.list()
-        for masternode in knows_masternodes:
-            masternode.activetime = timedelta(seconds=0)
-            masternode.status = "DISABLED"
-            masternode.active = False
-            masternode.rank = None
-
-        for masternode in masternodes["result"]:
-            address = AddressService.get_by_address(masternode["addr"], True)
-            lastseen = datetime.fromtimestamp(masternode["lastseen"])
-            lastpaid = datetime.fromtimestamp(masternode["lastpaid"])
-            activetime = timedelta(seconds=masternode["activetime"])
-            version = masternode["version"]
-            txhash = masternode["txhash"]
-            outidx = masternode["outidx"]
-            status = masternode["status"]
-            pubkey = masternode["pubkey"]
-            rank = masternode["rank"]
-
-            if (knows_masternode := MasternodeService.get_by_address(address)):
-                knows_masternode.activetime = activetime
-                knows_masternode.status = status
-                knows_masternode.active = True
-                knows_masternode.rank = rank
-
-            else:
-                MasternodeService.create(
-                    rank, activetime, lastseen, lastpaid,
-                    version, address, txhash, outidx,
-                    status, pubkey
-                )
-
-        # ToDo: masternodes historical data
 
 @orm.db_session
 def sync_blocks():
