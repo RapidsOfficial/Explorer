@@ -1,13 +1,13 @@
 from .constants import CURRENCY, BURN_ADDRESS
 from .models import Transaction
 from .models import Masternode
+from .models import Interval
 from .models import Location
 from .models import Address
 from .models import Balance
 from .models import Output
 from .models import Input
 from .models import Block
-from .models import Reward
 from .models import Stats
 from .models import Peer
 from pony import orm
@@ -47,10 +47,20 @@ class BlockService(object):
         ).page(page, pagesize=size)
 
     @classmethod
-    def reward(cls, block):
-        return Reward(
-            block=block
-        )
+    def time_range(cls, start=None, end=None):
+        blocks = Block.select()
+
+        if start:
+            blocks = blocks.filter(
+                lambda b: b.created >= start
+            )
+
+        if end:
+            blocks = blocks.filter(
+                lambda b: b.created < end
+            )
+
+        return blocks
 
 class TransactionService(object):
     @classmethod
@@ -217,4 +227,20 @@ class MasternodeService(object):
             lastpaid=lastpaid, version=version, address=address,
             txhash=txhash, outidx=outidx, status=status,
             pubkey=pubkey, active=active
+        )
+
+class IntervalService(object):
+    @classmethod
+    def latest(cls, key):
+        return Interval.select(
+            lambda i: i.key == key
+        ).order_by(
+            orm.desc(Interval.time)
+        ).first()
+
+    @classmethod
+    def create(cls, key, time, value=0):
+        return Interval(
+            key=key, time=time,
+            value=value
         )

@@ -3,15 +3,6 @@ from datetime import datetime
 from .base import db
 from pony import orm
 
-class Reward(db.Entity):
-    _table_ = "chain_block_rewards"
-
-    reward = orm.Required(float, default=0)
-    dev = orm.Required(float, default=0)
-    mn = orm.Required(float, default=0)
-
-    block = orm.Required("Block")
-
 class Block(db.Entity):
     _table_ = "chain_blocks"
 
@@ -25,10 +16,13 @@ class Block(db.Entity):
     nonce = orm.Required(int)
     size = orm.Required(int)
 
+    reward = orm.Required(float, default=0)
+    dev = orm.Required(float, default=0)
+    mn = orm.Required(float, default=0)
+
     previous_block = orm.Optional("Block")
     transactions = orm.Set("Transaction")
     next_block = orm.Optional("Block")
-    reward = orm.Optional("Reward")
 
     @property
     def txs(self):

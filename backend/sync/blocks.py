@@ -86,7 +86,9 @@ def sync_blocks():
         non_reward_transactions = 0
         total_transactions = 0
 
-        reward = BlockService.reward(block)
+        reward = 0
+        dev = 0
+        mn = 0
 
         for tx in txs:
             if block.stake and tx["index"] == 0:
@@ -126,7 +128,7 @@ def sync_blocks():
                     input_amout += prev_out.amount
 
                     if coinstake:
-                        reward.reward -= prev_out.amount
+                        reward -= prev_out.amount
 
             output_count = len(tx["outputs"])
 
@@ -164,33 +166,33 @@ def sync_blocks():
 
                     if coinstake:
                         if block.height > REDUCTION_HEIGHT and (index + 1) == 1:
-                            reward.dev += amount
+                            dev += amount
 
                         else:
                             if reward_address is None or reward_address == address:
                                 reward_address = address
-                                reward.reward += amount
+                                reward += amount
 
                         if block.height > REDUCTION_HEIGHT:
                             if (index + 1) == output_count - 1:
-                                reward.mn += amount
+                                mn += amount
 
                             if (index + 1) == output_count:
-                                reward.dev += amount
+                                dev += amount
 
                         else:
                             if (index + 1) == output_count:
-                                reward.mn += amount
+                                mn += amount
 
-                    if coinbase:
-                        reward.reward += amount
+                    elif coinbase:
+                        reward += amount
 
             if coinbase or coinstake or burn_amount > 0:
                 supply = StatsService.get_by_key("supply")
                 supply.value -= burn_amount
 
             if coinbase or coinstake:
-                supply.value += reward.reward + reward.dev + reward.mn
+                supply.value += reward + dev + mn
 
             else:
                 transaction.fee = input_amout - output_amount
@@ -207,6 +209,10 @@ def sync_blocks():
         if total_transactions > 0:
             transactions = StatsService.get_by_key("total_transactions")
             transactions.value += total_transactions
+
+        block.reward = reward
+        block.dev = dev
+        block.mn = mn
 
         latest_block = block
         orm.commit()
