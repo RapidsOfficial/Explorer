@@ -173,13 +173,25 @@ def network():
         "pages/peers.html", peers=peers
     )
 
-@blueprint.route("/masternodes")
+@blueprint.route("/masternodes", defaults={"page": 1})
+@blueprint.route("/masternodes/<int:page>")
 @orm.db_session
-def masternodes():
-    # ToDo: pagination?
+def masternodes(page):
     masternodes = MasternodeService.list(True)
+    masternodes = masternodes.order_by(lambda m: m.rank)
+    size = 100
+
+    total = math.ceil(len(masternodes) / size)
+    pagination = utils.pagination(
+        "frontend.masternodes", page,
+        size, total
+    )
+
+    masternodes = masternodes.page(page, pagesize=size)
+
     return render_template(
-        "pages/masternodes.html", masternodes=masternodes
+        "pages/masternodes.html", masternodes=masternodes,
+        pagination=pagination
     )
 
 @blueprint.route("/docs")

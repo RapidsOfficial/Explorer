@@ -1,6 +1,7 @@
 from .constants import CURRENCY, BURN_ADDRESS
 from .models import Transaction
 from .models import Masternode
+from .models import PeerInfo
 from .models import Address
 from .models import Balance
 from .models import Output
@@ -171,6 +172,13 @@ class PeerService(object):
         return Peer(
             address=address, port=port, version=version,
             subver=subver, active=active
+        )
+
+    @classmethod
+    def info(cls, country, lat, lon, city, code, peer):
+        return PeerInfo(
+            country=country, lat=lat, lon=lon,
+            city=city, code=code, peer=peer
         )
 
 class MasternodeService(object):

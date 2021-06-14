@@ -11,6 +11,7 @@
 							<tr>
 								<th scope="col">Address</th>
 								<th scope="col">Balance</th>
+								<th scope="col">Country</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -21,6 +22,13 @@
 									</td>
 									<td>
 										{{ peer.subver }}
+									</td>
+									<td>
+										{% if peer.info %}
+											{{ peer.info.country }} <img src="https://www.countryflags.io/{{ peer.info.code }}/flat/16.png">
+										{% else %}
+											Unknown
+										{% endif %}
 									</td>
 								</tr>
 							{% endfor %}

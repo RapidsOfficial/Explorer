@@ -44,6 +44,10 @@ def sync_peers():
     peers = General.peers()
 
     if peers["error"] is None:
+        total = len(peers["result"])
+
+        log_message(f"Syncing {total} peers")
+
         knows_peers = PeerService.list()
         for peer in knows_peers:
             peer.active = False
@@ -59,12 +63,19 @@ def sync_peers():
             if not subver:
                 continue
 
-            if (knows_peer := PeerService.get_by_address(address)):
-                knows_peer.active = True
+            if (known_peer := PeerService.get_by_address(address)):
+                known_peer.active = True
 
             else:
-                # ToDo: get country here
-                PeerService.create(address, port, version, subver)
+                known_peer = PeerService.create(address, port, version, subver)
+
+            if not known_peer.info:
+                if (location := utils.location(address)):
+                    PeerService.info(
+                        location["country"], location["lat"],
+                        location["lon"], location["city"],
+                        location["code"], known_peer
+                    )
 
         # ToDo: peer historical data
 
@@ -73,6 +84,10 @@ def sync_masternodes():
     masternodes = General.masternodes()
 
     if masternodes["error"] is None:
+        total = len(masternodes["result"])
+
+        log_message(f"Syncing {total} masternodes")
+
         knows_masternodes = MasternodeService.list()
         for masternode in knows_masternodes:
             masternode.activetime = timedelta(seconds=0)

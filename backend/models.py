@@ -20,8 +20,17 @@ class Peer(db.Entity):
     subver = orm.Required(str)
     port = orm.Required(int)
 
-    # ToDo: country?
-    # ToDo: location?
+    info = orm.Optional("PeerInfo")
+
+class PeerInfo(db.Entity):
+    _table_ = "chain_peer_info"
+
+    country = orm.Required(str)
+    peer = orm.Required("Peer")
+    lat = orm.Required(float)
+    lon = orm.Required(float)
+    city = orm.Required(str)
+    code = orm.Required(str)
 
 class Masternode(db.Entity):
     _table_ = "chain_masternodes"

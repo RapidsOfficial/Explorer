@@ -3,6 +3,25 @@ import config
 import math
 import json
 
+def location(address):
+    try:
+        r = requests.get(f"http://ip-api.com/json/{address}")
+        data = r.json()
+
+        if data["status"] != "success":
+            return None
+
+        return {
+            "country": data["country"],
+            "code": data["countryCode"],
+            "lat": data["lat"],
+            "lon": data["lon"],
+            "city": data["city"]
+        }
+
+    except Exception:
+        return None
+
 def dead_response(message="Invalid Request", rid=config.rid):
     return {"error": {"code": 404, "message": message}, "id": rid}
 
