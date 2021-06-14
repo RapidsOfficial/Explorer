@@ -69,9 +69,9 @@ def sync_peers():
             else:
                 known_peer = PeerService.create(address, port, version, subver)
 
-            if not known_peer.info:
+            if not known_peer.location:
                 if (location := utils.location(address)):
-                    PeerService.info(
+                    PeerService.location(
                         location["country"], location["lat"],
                         location["lon"], location["city"],
                         location["code"], known_peer

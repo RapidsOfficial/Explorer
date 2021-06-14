@@ -20,10 +20,10 @@ class Peer(db.Entity):
     subver = orm.Required(str)
     port = orm.Required(int)
 
-    info = orm.Optional("PeerInfo")
+    location = orm.Optional("Location")
 
-class PeerInfo(db.Entity):
-    _table_ = "chain_peer_info"
+class Location(db.Entity):
+    _table_ = "chain_peer_location"
 
     country = orm.Required(str)
     peer = orm.Required("Peer")

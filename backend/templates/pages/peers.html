@@ -24,8 +24,8 @@
 										{{ peer.subver }}
 									</td>
 									<td>
-										{% if peer.info %}
-											{{ peer.info.country }} <img src="https://www.countryflags.io/{{ peer.info.code }}/flat/16.png">
+										{% if peer.location %}
+											{{ peer.location.country }} <img src="https://www.countryflags.io/{{ peer.location.code }}/flat/16.png">
 										{% else %}
 											Unknown
 										{% endif %}
