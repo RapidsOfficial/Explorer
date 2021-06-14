@@ -84,6 +84,9 @@ def sync_blocks():
         log_block("New block", block, txs)
 
         non_reward_transactions = 0
+        total_transactions = 0
+
+        reward = BlockService.reward(block)
 
         for tx in txs:
             if block.stake and tx["index"] == 0:
@@ -97,7 +100,11 @@ def sync_blocks():
                 block, coinbase, coinstake
             )
 
+            output_amount = 0
             input_amout = 0
+            burn_amount = 0
+
+            reward_address = None
 
             for vin in tx["inputs"]:
                 if vin["coinbase"]:
@@ -108,21 +115,22 @@ def sync_blocks():
 
                 prev_out.address.transactions.add(transaction)
                 balance = BalanceService.get_by_currency(prev_out.address, prev_out.currency)
+                prev_out.address.lastactive = created
                 balance.balance -= prev_out.amount
-
-                if coinbase or coinstake:
-                    input_amout += prev_out.amount
-
-                if not prev_out:
-                    print(vin["txid"])
 
                 InputService.create(
                     vin["sequence"], vin["vout"], transaction, prev_out
                 )
 
-            burn_amount = 0
+                if prev_out.currency == CURRENCY:
+                    input_amout += prev_out.amount
 
-            for vout in tx["outputs"]:
+                    if coinstake:
+                        reward.reward -= prev_out.amount
+
+            output_count = len(tx["outputs"])
+
+            for index, vout in enumerate(tx["outputs"]):
                 if not vout["type"]:
                     continue
 
@@ -130,13 +138,16 @@ def sync_blocks():
                 if height <= REDUCTION_HEIGHT:
                     amount /= 1000
 
+                # ToDo: Add token support here
                 currency = CURRENCY
 
-                # ToDo: Add token support here
-
                 script = vout["address"]
-                address = AddressService.get_by_address(script, True)
+                address = AddressService.get_by_address(script, True, created)
                 address.transactions.add(transaction)
+                address.lastactive = created
+
+                if currency == CURRENCY:
+                    output_amount += amount
 
                 output = OutputService.create(
                     transaction, amount, vout["type"],
@@ -147,28 +158,55 @@ def sync_blocks():
                 balance = BalanceService.get_by_currency(address, currency)
                 balance.balance += output.amount
 
-                if address.address == BURN_ADDRESS:
-                    burn_amount += amount
+                if currency == CURRENCY:
+                    if address.address == BURN_ADDRESS:
+                        burn_amount += amount
+
+                    if coinstake:
+                        if block.height > REDUCTION_HEIGHT and (index + 1) == 1:
+                            reward.dev += amount
+
+                        else:
+                            if reward_address is None or reward_address == address:
+                                reward_address = address
+                                reward.reward += amount
+
+                        if block.height > REDUCTION_HEIGHT:
+                            if (index + 1) == output_count - 1:
+                                reward.mn += amount
+
+                            if (index + 1) == output_count:
+                                reward.dev += amount
+
+                        else:
+                            if (index + 1) == output_count:
+                                reward.mn += amount
+
+                    if coinbase:
+                        reward.reward += amount
 
             if coinbase or coinstake or burn_amount > 0:
                 supply = StatsService.get_by_key("supply")
                 supply.value -= burn_amount
 
             if coinbase or coinstake:
-                supply.value += block.reward + block.dev + block.mn
+                supply.value += reward.reward + reward.dev + reward.mn
 
             else:
+                transaction.fee = input_amout - output_amount
                 non_reward_transactions += 1
 
-        # ToDo: Count transactions here
-
-        # ToDo: Calculate fee
+            total_transactions += 1
 
         # ToDo: Decimals?
 
         if non_reward_transactions > 0:
-            transactions = StatsService.get_by_key("transactions")
+            transactions = StatsService.get_by_key("non_reward_transactions")
             transactions.value += non_reward_transactions
+
+        if total_transactions > 0:
+            transactions = StatsService.get_by_key("total_transactions")
+            transactions.value += total_transactions
 
         latest_block = block
         orm.commit()

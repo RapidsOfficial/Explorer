@@ -75,11 +75,9 @@ class Transaction(db.Entity):
         output_amount = 0
 
         if self.is_reward:
-            pass
-            # rewards = self.block.rewards
-            # output_amount += (
-            #     rewards["reward"] + rewards["dev"] + rewards["mn"]
-            # )
+            output_amount += (
+                self.block.reward.reward + self.block.reward.dev + self.block.reward.rewards.mn
+            )
 
         else:
             for vout in self.outputs:

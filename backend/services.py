@@ -7,6 +7,7 @@ from .models import Balance
 from .models import Output
 from .models import Input
 from .models import Block
+from .models import Reward
 from .models import Stats
 from .models import Peer
 from pony import orm
@@ -44,6 +45,12 @@ class BlockService(object):
         return Block.select().order_by(
             orm.desc(Block.height)
         ).page(page, pagesize=size)
+
+    @classmethod
+    def reward(cls, block):
+        return Reward(
+            block=block
+        )
 
 class TransactionService(object):
     @classmethod
@@ -86,11 +93,13 @@ class InputService(object):
 
 class AddressService(object):
     @classmethod
-    def get_by_address(cls, script, create=False):
+    def get_by_address(cls, script, create=False, lastactive=None):
         address = Address.get(address=script)
 
         if not address and create:
-            address = AddressService.create(script)
+            address = AddressService.create(
+                script, lastactive
+            )
 
         return address
 
@@ -106,8 +115,11 @@ class AddressService(object):
         return query.page(page, pagesize=size)
 
     @classmethod
-    def create(cls, address):
-        return Address(address=address)
+    def create(cls, address, created):
+        return Address(
+            address=address, created=created,
+            lastactive=created
+        )
 
 class BalanceService(object):
     @classmethod
