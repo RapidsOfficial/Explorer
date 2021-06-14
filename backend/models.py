@@ -141,6 +141,8 @@ class Transaction(db.Entity):
 
     addresses = orm.Set("Address")
 
+    # ToDo: pre-calculate fee
+
     @property
     def fee(self):
         if not self.coinbase and not self.coinstake:

@@ -6,10 +6,9 @@ from ..services import BlockService
 from flask import redirect, url_for
 from ..services import PeerService
 from flask import render_template
+from .args import search_args
 from flask import Blueprint
 from pony import orm
-
-from .args import search_args
 from .. import utils
 import math
 
@@ -59,20 +58,23 @@ def transactions(page):
 @orm.db_session
 def block(blockhash, page):
     size = 10
-    block = BlockService.get_by_hash(blockhash)
-    transactions = block.txs.page(page, pagesize=size)
 
-    total = math.ceil(block.txcount / size)
-    pagination = utils.pagination(
-        "frontend.block", page,
-        size, total
-    )
+    if (block := BlockService.get_by_hash(blockhash)):
+        transactions = block.txs.page(page, pagesize=size)
 
-    return render_template(
-        "pages/block.html", block=block,
-        transactions=transactions,
-        pagination=pagination
-    )
+        total = math.ceil(block.txcount / size)
+        pagination = utils.pagination(
+            "frontend.block", page,
+            size, total
+        )
+
+        return render_template(
+            "pages/block.html", block=block,
+            transactions=transactions,
+            pagination=pagination
+        )
+
+    return render_template("pages/404.html")
 
 @blueprint.route("/height/<int:height>")
 @orm.db_session
@@ -85,33 +87,35 @@ def height(height):
 @blueprint.route("/transaction/<string:txid>")
 @orm.db_session
 def transaction(txid):
-    transaction = TransactionService.get_by_txid(txid)
-    return render_template("pages/transaction.html", transaction=transaction)
+    if (transaction := TransactionService.get_by_txid(txid)):
+        return render_template("pages/transaction.html", transaction=transaction)
+
+    return render_template("pages/404.html")
 
 @blueprint.route("/address/<string:address>", defaults={"page": 1})
 @blueprint.route("/address/<string:address>/<int:page>")
 @orm.db_session
 def address(address, page):
-    address = AddressService.get_by_address(address)
-
-    # ToDo: Add address validity check here
-
-    # ToDo: transactions pagination
-
     size = 10
-    transactions = address.txs.page(page, pagesize=size)
 
-    total = math.ceil(address.txcount / size)
-    pagination = utils.pagination(
-        "frontend.address", page,
-        size, total
-    )
+    # ToDo: Add address validity check here?
 
-    return render_template(
-        "pages/address.html", address=address,
-        transactions=transactions,
-        pagination=pagination
-    )
+    if (address := AddressService.get_by_address(address)):
+        transactions = address.txs.page(page, pagesize=size)
+
+        total = math.ceil(address.txcount / size)
+        pagination = utils.pagination(
+            "frontend.address", page,
+            size, total
+        )
+
+        return render_template(
+            "pages/address.html", address=address,
+            transactions=transactions,
+            pagination=pagination
+        )
+
+    return render_template("pages/404.html")
 
 @blueprint.route("/search")
 @use_args(search_args, location="query")
@@ -163,6 +167,7 @@ def holders(page):
 @blueprint.route("/network")
 @orm.db_session
 def network():
+    # ToDo: pagination?
     peers = PeerService.list(True)
     return render_template(
         "pages/peers.html", peers=peers
@@ -171,6 +176,7 @@ def network():
 @blueprint.route("/masternodes")
 @orm.db_session
 def masternodes():
+    # ToDo: pagination?
     masternodes = MasternodeService.list(True)
     return render_template(
         "pages/masternodes.html", masternodes=masternodes

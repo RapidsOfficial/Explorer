@@ -1,113 +1,109 @@
 {% extends "layout.html" %}
 {% block content %}
-	{% if block %}
-		<h1 class="h3 mb-3 text-gray-800">Block</h1>
+	<h1 class="h3 mb-3 text-gray-800">Block</h1>
 
-		<div id="block-info-table">
-			<div class="card mb-3">
-				<div class="table-responsive">
-					<table class="table table-borderless table-md table-striped mb-0">
-						<tbody>
-							<tr>
-								<td>Height</td>
-								<td id="block-info-height" data-block-info-height="{{ block.height }}">{{ block.height }} (<b>Confirmations {{ block.confirmations }}</b>)</td>
-							</tr>
-							<tr>
-								<td>Timestamp</td>
-								<td>{{ block.created }} (<b>{{ block.timestamp }}</b>)</td>
-							</tr>
-							<tr>
-								<td>Block Hash</td>
-								<td id="block-info-hash" data-block-info-hash="{{ block.blockhash }}">{{ block.blockhash }}</td>
-							</tr>
-							<tr>
-								<td>Previous Block</td>
+	<div id="block-info-table">
+		<div class="card mb-3">
+			<div class="table-responsive">
+				<table class="table table-borderless table-md table-striped mb-0">
+					<tbody>
+						<tr>
+							<td>Height</td>
+							<td id="block-info-height" data-block-info-height="{{ block.height }}">{{ block.height }} (<b>Confirmations {{ block.confirmations }}</b>)</td>
+						</tr>
+						<tr>
+							<td>Timestamp</td>
+							<td>{{ block.created }} (<b>{{ block.timestamp }}</b>)</td>
+						</tr>
+						<tr>
+							<td>Block Hash</td>
+							<td id="block-info-hash" data-block-info-hash="{{ block.blockhash }}">{{ block.blockhash }}</td>
+						</tr>
+						<tr>
+							<td>Previous Block</td>
 
-								{% if block.previous_block %}
-									<td>
-										<a href="{{ url_for('frontend.block', blockhash=block.previous_block.blockhash) }}">
-											{{ block.previous_block.blockhash }}
-										</a>
-									</td>
-								{% else%}
-									<td>
-										<b>Genesis block</b>
-									</td>
-								{% endif %}
-							</tr>
-							<tr>
-								<td>Next Block</td>
-
-								{% if block.next_block %}
-									<td>
-										<a href="{{ url_for('frontend.block', blockhash=block.next_block.blockhash) }}">
-											{{ block.next_block.blockhash }}
-										</a>
-									</td>
-								{% else%}
-									<td>
-										<b>This is latest block</b>
-									</td>
-								{% endif %}
-							</tr>
-							<tr>
-								<td>Merkle Root</td>
+							{% if block.previous_block %}
 								<td>
-									{{ block.merkleroot }}
+									<a href="{{ url_for('frontend.block', blockhash=block.previous_block.blockhash) }}">
+										{{ block.previous_block.blockhash }}
+									</a>
 								</td>
-							</tr>
-							<tr>
-								<td>Size</td>
-								<td>{{ block.size }} Bytes</td>
-							</tr>
-							<tr>
-								<td>Version</td>
-								<td>{{ block.version }}</td>
-							</tr>
-							<tr>
-								<td>Transactions</td>
-								<td>{{ block.txcount }}</td>
-							</tr>
-						</tbody>
-					</table>
-				</div>
+							{% else%}
+								<td>
+									<b>Genesis block</b>
+								</td>
+							{% endif %}
+						</tr>
+						<tr>
+							<td>Next Block</td>
+
+							{% if block.next_block %}
+								<td>
+									<a href="{{ url_for('frontend.block', blockhash=block.next_block.blockhash) }}">
+										{{ block.next_block.blockhash }}
+									</a>
+								</td>
+							{% else%}
+								<td>
+									<b>This is latest block</b>
+								</td>
+							{% endif %}
+						</tr>
+						<tr>
+							<td>Merkle Root</td>
+							<td>
+								{{ block.merkleroot }}
+							</td>
+						</tr>
+						<tr>
+							<td>Size</td>
+							<td>{{ block.size }} Bytes</td>
+						</tr>
+						<tr>
+							<td>Version</td>
+							<td>{{ block.version }}</td>
+						</tr>
+						<tr>
+							<td>Transactions</td>
+							<td>{{ block.txcount }}</td>
+						</tr>
+					</tbody>
+				</table>
 			</div>
 		</div>
-		{% for transaction in transactions %}
-			<div class="card mb-3">
-				<div class="card-header">
-					<a href="{{ url_for('frontend.transaction', txid=transaction.txid) }}">
-						{{ transaction.txid }}
-					</a>
-				</div>
-				<div class="card-body">
-					{% include "details.html" %}
-				</div>
+	</div>
+	{% for transaction in transactions %}
+		<div class="card mb-3">
+			<div class="card-header">
+				<a href="{{ url_for('frontend.transaction', txid=transaction.txid) }}">
+					{{ transaction.txid }}
+				</a>
 			</div>
-		{% endfor %}
+			<div class="card-body">
+				{% include "details.html" %}
+			</div>
+		</div>
+	{% endfor %}
 
-		{% if pagination %}
-			{% if pagination.pages|length > 1 %}
-				{% if pagination.previous %}
-					<a href="{{ url_for(pagination.url, page=pagination.previous, blockhash=block.blockhash) }}" class="button">
-						<i class="fas fa-fw fa-chevron-left"></i>
-					</a>
-				{% endif %}
+	{% if pagination %}
+		{% if pagination.pages|length > 1 %}
+			{% if pagination.previous %}
+				<a href="{{ url_for(pagination.url, page=pagination.previous, blockhash=block.blockhash) }}" class="button">
+					<i class="fas fa-fw fa-chevron-left"></i>
+				</a>
+			{% endif %}
 
-				{% for page in pagination.pages %}
-					<a href="{{ url_for(pagination.url, page=page, blockhash=block.blockhash) }}" class="button {% if page == pagination.current %}active{% endif %} {% if page == pagination.current - 1 or page == pagination.current + 1 %}show-xs{% endif %}">
-						{{ page }}
-					</a>
-				{% endfor %}
+			{% for page in pagination.pages %}
+				<a href="{{ url_for(pagination.url, page=page, blockhash=block.blockhash) }}" class="button {% if page == pagination.current %}active{% endif %} {% if page == pagination.current - 1 or page == pagination.current + 1 %}show-xs{% endif %}">
+					{{ page }}
+				</a>
+			{% endfor %}
 
-				{% if pagination.next %}
-					<a href="{{ url_for(pagination.url, page=pagination.next, blockhash=block.blockhash) }}" class="button">
-						<i class="fas fa-fw fa-chevron-right"></i>
-					</a>
-				{% endif %}
+			{% if pagination.next %}
+				<a href="{{ url_for(pagination.url, page=pagination.next, blockhash=block.blockhash) }}" class="button">
+					<i class="fas fa-fw fa-chevron-right"></i>
+				</a>
 			{% endif %}
 		{% endif %}
-	{% else %}
-		Block not found
 	{% endif %}
 {% endblock content %}
