@@ -22,7 +22,9 @@
 										{{ masternode.rank }}
 									</td>
 									<td>
-										{{ masternode.address.address }}
+										<a href="{{ url_for('frontend.address', address=masternode.address.address) }}">
+											{{ masternode.address.address }}
+										</a>
 									</td>
 									<td>
 										{{ masternode.status }}
@@ -39,5 +41,5 @@
 		</div>
 	</div>
 
-	{% include "pagination.html" %}
+	{% include "elements/pagination.html" %}
 {% endblock content %}
