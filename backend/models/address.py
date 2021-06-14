@@ -1,0 +1,28 @@
+from .base import db
+from pony import orm
+
+class Address(db.Entity):
+    _table_ = "chain_addresses"
+
+    # ToDo: Created/last active
+    # ToDo: POS info
+
+    address = orm.Required(str, index=True)
+
+    transactions = orm.Set(
+        "Transaction", table="chain_address_transactions",
+        reverse="addresses"
+    )
+
+    masternode = orm.Set("Masternode")
+    balances = orm.Set("Balance")
+    outputs = orm.Set("Output")
+
+    @property
+    def txcount(self):
+        return len(self.transactions)
+
+    @property
+    def txs(self):
+        transactions = self.transactions.order_by(1)
+        return transactions
