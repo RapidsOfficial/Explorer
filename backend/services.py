@@ -1,5 +1,6 @@
 from .constants import CURRENCY, BURN_ADDRESS
 from .models import Transaction
+from .models import Masternode
 from .models import Address
 from .models import Balance
 from .models import Output
@@ -170,4 +171,30 @@ class PeerService(object):
         return Peer(
             address=address, port=port, version=version,
             subver=subver, active=active
+        )
+
+class MasternodeService(object):
+    @classmethod
+    def list(cls, all_masternodes=False):
+        masternodes = Masternode.select()
+
+        if not all_masternodes:
+            masternodes = masternodes.filter(lambda m: m.active is True)
+
+        return masternodes
+
+    @classmethod
+    def get_by_address(cls, address):
+        masternode = Masternode.get(address=address)
+        return masternode
+
+    @classmethod
+    def create(cls, rank, activetime, lastseen, lastpaid,
+               version, address, txhash, outidx, status,
+               pubkey, active=True):
+        return Masternode(
+            rank=rank, activetime=activetime, lastseen=lastseen,
+            lastpaid=lastpaid, version=version, address=address,
+            txhash=txhash, outidx=outidx, status=status,
+            pubkey=pubkey, active=active
         )

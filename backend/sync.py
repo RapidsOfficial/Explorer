@@ -1,5 +1,7 @@
 from .constants import REDUCTION_HEIGHT, BURN_ADDRESS, CURRENCY
+from datetime import datetime, timedelta
 from .services import TransactionService
+from .services import MasternodeService
 from .methods.general import General
 from .services import BalanceService
 from .services import AddressService
@@ -9,7 +11,6 @@ from .services import BlockService
 from .services import StatsService
 from .services import PeerService
 from .methods.block import Block
-from datetime import datetime
 from pony import orm
 from . import parser
 from . import utils
@@ -66,6 +67,45 @@ def sync_peers():
                 PeerService.create(address, port, version, subver)
 
         # ToDo: peer historical data
+
+@orm.db_session
+def sync_masternodes():
+    masternodes = General.masternodes()
+
+    if masternodes["error"] is None:
+        knows_masternodes = MasternodeService.list()
+        for masternode in knows_masternodes:
+            masternode.activetime = timedelta(seconds=0)
+            masternode.status = "DISABLED"
+            masternode.active = False
+            masternode.rank = None
+
+        for masternode in masternodes["result"]:
+            address = AddressService.get_by_address(masternode["addr"], True)
+            lastseen = datetime.fromtimestamp(masternode["lastseen"])
+            lastpaid = datetime.fromtimestamp(masternode["lastpaid"])
+            activetime = timedelta(seconds=masternode["activetime"])
+            version = masternode["version"]
+            txhash = masternode["txhash"]
+            outidx = masternode["outidx"]
+            status = masternode["status"]
+            pubkey = masternode["pubkey"]
+            rank = masternode["rank"]
+
+            if (knows_masternode := MasternodeService.get_by_address(address)):
+                knows_masternode.activetime = activetime
+                knows_masternode.status = status
+                knows_masternode.active = True
+                knows_masternode.rank = rank
+
+            else:
+                MasternodeService.create(
+                    rank, activetime, lastseen, lastpaid,
+                    version, address, txhash, outidx,
+                    status, pubkey
+                )
+
+        # ToDo: masternodes historical data
 
 @orm.db_session
 def sync_blocks():

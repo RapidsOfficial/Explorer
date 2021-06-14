@@ -1,5 +1,5 @@
 from .constants import REDUCTION_HEIGHT, DECIMALS, CURRENCY
-from datetime import datetime
+from datetime import datetime, timedelta
 from pony import orm
 
 db = orm.Database("sqlite", "../rapids.db", create_db=True)
@@ -22,6 +22,22 @@ class Peer(db.Entity):
 
     # ToDo: country?
     # ToDo: location?
+
+class Masternode(db.Entity):
+    _table_ = "chain_masternodes"
+
+    created = orm.Required(datetime, default=datetime.utcnow)
+    active = orm.Required(bool, default=False)
+    rank = orm.Optional(int, nullable=True)
+    activetime = orm.Required(timedelta)
+    lastseen = orm.Required(datetime)
+    lastpaid = orm.Required(datetime)
+    address = orm.Required("Address")
+    version = orm.Required(int)
+    txhash = orm.Required(str)
+    outidx = orm.Required(int)
+    status = orm.Required(str)
+    pubkey = orm.Required(str)
 
 class Block(db.Entity):
     _table_ = "chain_blocks"
@@ -273,14 +289,15 @@ class Address(db.Entity):
     # ToDo: POS info
 
     address = orm.Required(str, index=True)
-    outputs = orm.Set("Output")
 
     transactions = orm.Set(
         "Transaction", table="chain_address_transactions",
         reverse="addresses"
     )
 
+    masternode = orm.Set("Masternode")
     balances = orm.Set("Balance")
+    outputs = orm.Set("Output")
 
     @property
     def txcount(self):
