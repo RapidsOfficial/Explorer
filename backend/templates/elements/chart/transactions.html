@@ -1,0 +1,52 @@
+<div id="chart"></div>
+
+<script type="text/javascript">
+
+	fetch("{{ url_for('api.chart', key='transactions') }}").then(function(data) {
+		return data.json()
+	}).then(function(data) {
+		const height = 300
+
+		let lineChartEl = document.getElementById("chart")
+		let lineChartOptions = {
+			width: 800,
+			height: height,
+			localization: {
+				priceFormatter: (txcount) => {
+					return parseInt(txcount) + " TXs"
+				}
+			},
+		}
+
+		let lineChart = LightweightCharts.createChart(lineChartEl, lineChartOptions)
+		let lineSeries = lineChart.addLineSeries()
+		let simpleData = data["result"]
+
+		lineSeries.setData(simpleData)
+		lineChart.timeScale().fitContent()
+
+		function resize() {
+			lineChart.applyOptions({ width: lineChartEl.offsetWidth, height: height })
+		}
+
+		lineChart.applyOptions({
+			timeScale: {
+				rightOffset: 7,
+				barSpacing: 7,
+				fixLeftEdge: true,
+				lockVisibleTimeRangeOnResize: true,
+				rightBarStaysOnScroll: true,
+				borderVisible: false,
+				visible: true,
+				timeVisible: true,
+				secondsVisible: false,
+			},
+		})
+
+		window.addEventListener("resize", function(event) {
+			resize()
+		}, true)
+
+		resize()
+	})
+</script>

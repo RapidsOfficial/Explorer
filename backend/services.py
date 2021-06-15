@@ -259,4 +259,4 @@ class IntervalService(object):
     def list(cls, key):
         return Interval.select(
             lambda i: i.key == key
-        )
+        ).order_by(Interval.time)

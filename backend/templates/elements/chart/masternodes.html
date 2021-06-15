@@ -2,7 +2,7 @@
 
 <script type="text/javascript">
 
-	fetch("{{ url_for('api.chart_transactions') }}").then(function(data) {
+	fetch("{{ url_for('api.chart', key='masternodes') }}").then(function(data) {
 		return data.json()
 	}).then(function(data) {
 		const height = 300
@@ -28,20 +28,6 @@
 		function resize() {
 			lineChart.applyOptions({ width: lineChartEl.offsetWidth, height: height })
 		}
-
-		lineChart.applyOptions({
-			timeScale: {
-				rightOffset: 7,
-				barSpacing: 7,
-				fixLeftEdge: true,
-				lockVisibleTimeRangeOnResize: true,
-				rightBarStaysOnScroll: true,
-				borderVisible: false,
-				visible: true,
-				timeVisible: true,
-				secondsVisible: false,
-			},
-		})
 
 		window.addEventListener("resize", function(event) {
 			resize()

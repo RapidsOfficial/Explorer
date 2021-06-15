@@ -4,7 +4,7 @@
 		<div class="col-12">
 			<h1 class="h3 mb-3 text-gray-800">Recent transactions</h1>
 
-			{% include "elements/transactions.html" %}
+			{% include "elements/chart/transactions.html" %}
 
 			<div class="card mb-3">
 				<div class="table-responsive">
@@ -35,6 +35,9 @@
 									</td>
 									<td>
 										<span>{{ transaction.amount }}</span> <b>RPD</b>
+										{% if transaction.coinbase or transaction.coinstake %}
+											💎
+										{% endif %}
 									</td>
 								</tr>
 							{% endfor %}

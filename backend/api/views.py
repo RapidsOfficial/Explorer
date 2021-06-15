@@ -8,17 +8,19 @@ from pony import orm
 
 blueprint = Blueprint("api", __name__, url_prefix="/v2/")
 
-@blueprint.route("/chart/transactions", methods=["GET"])
+@blueprint.route("/chart/<string:key>", methods=["GET"])
 @orm.db_session
-def chart_transactions():
-    intervals = IntervalService.list("transactions")
+def chart(key):
     chart = []
 
-    for interval in intervals:
-        chart.append({
-            "time": str(interval.time),
-            "value": interval.value,
-        })
+    if key in ["transactions", "masternodes"]:
+        intervals = IntervalService.list(key)
+
+        for interval in intervals:
+            chart.append({
+                "time": str(interval.time),
+                "value": interval.value,
+            })
 
     return utils.response(chart)
 

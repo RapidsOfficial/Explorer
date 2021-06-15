@@ -49,7 +49,7 @@ def sync_masternodes():
                     status, pubkey
                 )
 
-        time = utils.datetime_round_minute5(datetime.utcnow())
+        time = utils.datetime_round_day(datetime.utcnow())
         interval = IntervalService.get_by_time(INTERVAL_KEY, time)
 
         if not interval:
