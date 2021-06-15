@@ -1,4 +1,5 @@
 from flask import render_template, redirect, url_for
+from ..services import IntervalService
 from ..services import BlockService
 from pony import orm
 from .. import utils
@@ -19,9 +20,11 @@ def init(blueprint):
             size, total
         )
 
+        chart = IntervalService.list("transactions")
+
         return render_template(
             "pages/overview.html", pagination=pagination,
-            blocks=blocks
+            blocks=blocks, chart=chart
         )
 
     @blueprint.route("/block/<string:blockhash>", defaults={"page": 1})

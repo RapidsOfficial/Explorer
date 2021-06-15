@@ -16,7 +16,6 @@ class Address(db.Entity):
         reverse="addresses"
     )
 
-    masternode = orm.Set("Masternode")
     balances = orm.Set("Balance")
     outputs = orm.Set("Output")
 

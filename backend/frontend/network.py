@@ -9,7 +9,7 @@ def init(blueprint):
     @blueprint.route("/network")
     @orm.db_session
     def network():
-        peers = PeerService.list(True)
+        peers = PeerService.list()
         return render_template(
             "pages/peers.html", peers=peers
         )
@@ -18,7 +18,7 @@ def init(blueprint):
     @blueprint.route("/masternodes/<int:page>")
     @orm.db_session
     def masternodes(page):
-        masternodes = MasternodeService.list(True)
+        masternodes = MasternodeService.list()
         masternodes = masternodes.order_by(lambda m: m.rank)
         size = 100
 

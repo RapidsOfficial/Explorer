@@ -1,4 +1,5 @@
 from webargs.flaskparser import use_args
+from ..services import IntervalService
 from ..services import BlockService
 from flask import Blueprint
 from .args import page_args
@@ -6,6 +7,20 @@ from .. import utils
 from pony import orm
 
 blueprint = Blueprint("api", __name__, url_prefix="/v2/")
+
+@blueprint.route("/chart/transactions", methods=["GET"])
+@orm.db_session
+def chart_transactions():
+    intervals = IntervalService.list("transactions")
+    chart = []
+
+    for interval in intervals:
+        chart.append({
+            "time": str(interval.time),
+            "value": interval.value,
+        })
+
+    return utils.response(chart)
 
 @blueprint.route("/latest", methods=["GET"])
 @orm.db_session

@@ -13,7 +13,7 @@ def sync_peers():
 
         log_message(f"Syncing {total} peers")
 
-        knows_peers = PeerService.list()
+        knows_peers = PeerService.list(True)
         for peer in knows_peers:
             peer.active = False
 

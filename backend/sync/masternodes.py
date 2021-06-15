@@ -2,7 +2,6 @@ from ..services import MasternodeService
 from datetime import datetime, timedelta
 from ..services import IntervalService
 from ..methods.general import General
-from ..services import AddressService
 from .utils import log_message
 from pony import orm
 from . import utils
@@ -15,11 +14,10 @@ def sync_masternodes():
 
     if masternodes["error"] is None:
         total = len(masternodes["result"])
-        now = datetime.utcnow()
 
         log_message(f"Syncing {total} masternodes")
 
-        knows_masternodes = MasternodeService.list()
+        knows_masternodes = MasternodeService.list(True)
         for masternode in knows_masternodes:
             masternode.activetime = timedelta(seconds=0)
             masternode.status = "DISABLED"
@@ -27,7 +25,6 @@ def sync_masternodes():
             masternode.rank = None
 
         for masternode in masternodes["result"]:
-            address = AddressService.get_by_address(masternode["addr"], True, now)
             lastseen = datetime.fromtimestamp(masternode["lastseen"])
             lastpaid = datetime.fromtimestamp(masternode["lastpaid"])
             activetime = timedelta(seconds=masternode["activetime"])
@@ -36,6 +33,7 @@ def sync_masternodes():
             outidx = masternode["outidx"]
             status = masternode["status"]
             pubkey = masternode["pubkey"]
+            address = masternode["addr"]
             rank = masternode["rank"]
 
             if (knows_masternode := MasternodeService.get_by_address(address)):
@@ -51,7 +49,7 @@ def sync_masternodes():
                     status, pubkey
                 )
 
-        time = utils.datetime_round_minute5(now)
+        time = utils.datetime_round_minute5(datetime.utcnow())
         interval = IntervalService.get_by_time(INTERVAL_KEY, time)
 
         if not interval:

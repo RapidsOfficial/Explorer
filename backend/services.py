@@ -78,7 +78,9 @@ class TransactionService(object):
 
     @classmethod
     def count(cls):
-        return Transaction.select().count(distinct=False)
+        # return Transaction.select().count(distinct=False)
+        total = StatsService.get_by_key("total_transactions")
+        return int(total.value)
 
     @classmethod
     def transactions(cls, page=1, currency=None, size=100):
@@ -209,7 +211,9 @@ class MasternodeService(object):
         masternodes = Masternode.select()
 
         if not all_masternodes:
-            masternodes = masternodes.filter(lambda m: m.active is True)
+            masternodes = masternodes.filter(
+                lambda m: m.active is True and m.rank is not None
+            )
 
         return masternodes
 
@@ -249,4 +253,10 @@ class IntervalService(object):
         return Interval(
             key=key, time=time,
             value=value
+        )
+
+    @classmethod
+    def list(cls, key):
+        return Interval.select(
+            lambda i: i.key == key
         )

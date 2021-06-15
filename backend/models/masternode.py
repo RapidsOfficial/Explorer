@@ -11,7 +11,7 @@ class Masternode(db.Entity):
     activetime = orm.Required(timedelta)
     lastseen = orm.Required(datetime)
     lastpaid = orm.Required(datetime)
-    address = orm.Required("Address")
+    address = orm.Required(str)
     version = orm.Required(int)
     txhash = orm.Required(str)
     outidx = orm.Required(int)

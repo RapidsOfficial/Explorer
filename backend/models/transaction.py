@@ -76,7 +76,7 @@ class Transaction(db.Entity):
 
         if self.is_reward:
             output_amount += (
-                self.block.reward.reward + self.block.reward.dev + self.block.reward.rewards.mn
+                self.block.reward + self.block.dev + self.block.mn
             )
 
         else:
