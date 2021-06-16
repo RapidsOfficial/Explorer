@@ -1,4 +1,4 @@
-# from ..constants import REDUCTION_HEIGHT, DECIMALS
+from ..constants import DECIMALS
 from datetime import datetime
 from .base import db
 from pony import orm
@@ -44,3 +44,11 @@ class Block(db.Entity):
         ).first()
 
         return latest_blocks.height - self.height + 1
+
+    @property
+    def rewards(self):
+        return {
+            "reward": round(self.reward, DECIMALS),
+            "dev": round(self.dev, DECIMALS),
+            "mn": round(self.mn, DECIMALS)
+        }

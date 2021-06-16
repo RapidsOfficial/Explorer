@@ -165,7 +165,7 @@ def sync_blocks():
                         burn_amount += amount
 
                     if coinstake:
-                        if block.height > REDUCTION_HEIGHT and (index + 1) == 1:
+                        if block.height > REDUCTION_HEIGHT and index == 1:
                             dev += amount
 
                         else:
@@ -174,14 +174,14 @@ def sync_blocks():
                                 reward += amount
 
                         if block.height > REDUCTION_HEIGHT:
-                            if (index + 1) == output_count - 1:
+                            if index == output_count - 1:
                                 mn += amount
 
-                            if (index + 1) == output_count:
+                            if index == output_count:
                                 dev += amount
 
                         else:
-                            if (index + 1) == output_count:
+                            if index == output_count:
                                 mn += amount
 
                     elif coinbase:
