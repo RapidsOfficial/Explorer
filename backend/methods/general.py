@@ -69,3 +69,8 @@ class General():
     def peers(cls):
         data = utils.make_request("getpeerinfo")
         return data
+
+    @classmethod
+    def getdifficulty(cls):
+        data = utils.make_request("getdifficulty")
+        return data

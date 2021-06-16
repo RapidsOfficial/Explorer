@@ -96,6 +96,24 @@ class Transaction(db.Entity):
 
         return result
 
+    @property
+    def input_amount(self):
+        total = 0
+
+        for vin in self.inputs:
+            total += vin.vout.amount
+
+        return total
+
+    @property
+    def output_amount(self):
+        total = 0
+
+        for vout in self.outputs:
+            total += vout.amount
+
+        return total
+
     def display(self):
         # latest_blocks = Block.select().order_by(
         #     orm.desc(Block.height)

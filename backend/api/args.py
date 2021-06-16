@@ -7,3 +7,7 @@ page_args = {
 broadcast_args = {
     "raw": fields.Str(required=True)
 }
+
+bulwark_broadcast_args = {
+    "rawtx": fields.Str(required=True)
+}

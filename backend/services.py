@@ -192,6 +192,10 @@ class PeerService(object):
         return peer
 
     @classmethod
+    def count(cls):
+        return Peer.select(lambda p: p.active is True).count()
+
+    @classmethod
     def create(cls, address, port, version, subver, active=True):
         return Peer(
             address=address, port=port, version=version,
@@ -216,6 +220,18 @@ class MasternodeService(object):
             )
 
         return masternodes
+
+    @classmethod
+    def total(cls):
+        return Masternode.select().filter(
+            lambda m: m.active is True and m.rank is not None
+        ).count()
+
+    @classmethod
+    def enabled(cls):
+        return Masternode.select().filter(
+            lambda m: m.active is True and m.rank is not None and m.status == "ENABLED"
+        ).count()
 
     @classmethod
     def get_by_address(cls, address):
