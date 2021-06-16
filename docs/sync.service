@@ -1,0 +1,12 @@
+[Unit]
+Description=Sync service
+After=multi-user.target
+
+[Service]
+Type=idle
+ExecStart=/path/to/explorer/venv/bin/python3 /path/to/explorer/sync.py
+WorkingDirectory=/path/to/explorer
+User=username
+
+[Install]
+WantedBy=multi-user.target

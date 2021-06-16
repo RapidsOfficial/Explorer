@@ -28,6 +28,7 @@ def init(blueprint):
     @blueprint.route("/transaction/<string:txid>")
     @orm.db_session
     def transaction(txid):
+        # ToDo: Add fallback request to node in case if transaction is in mempool
         if (transaction := TransactionService.get_by_txid(txid)):
             return render_template("pages/transaction.html", transaction=transaction)
 

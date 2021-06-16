@@ -1,0 +1,13 @@
+[Unit]
+Description=Gunicorn instance for serving Explorer
+After=network.target
+
+[Service]
+User=username
+Group=www-data
+WorkingDirectory=/path/to/explorer
+Environment="PATH=/path/to/explorer/venv/bin"
+ExecStart=/path/to/explorer/venv/bin/gunicorn app:app --worker-class eventlet -w 1 --bind 0.0.0.0:4321 --reload
+
+[Install]
+WantedBy=multi-user.target
