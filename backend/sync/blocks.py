@@ -119,6 +119,7 @@ def sync_blocks():
                 balance = BalanceService.get_by_currency(prev_out.address, prev_out.currency)
                 prev_out.address.lastactive = created
                 balance.balance -= prev_out.amount
+                balance.sent += prev_out.amount
 
                 InputService.create(
                     vin["sequence"], vin["vout"], transaction, prev_out
@@ -159,6 +160,7 @@ def sync_blocks():
 
                 balance = BalanceService.get_by_currency(address, currency)
                 balance.balance += output.amount
+                balance.received += output.amount
 
                 if currency == CURRENCY:
                     if address.address == BURN_ADDRESS:
