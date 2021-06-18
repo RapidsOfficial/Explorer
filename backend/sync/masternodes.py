@@ -1,8 +1,8 @@
 from ..services import MasternodeService
-from datetime import datetime, timedelta
 from ..services import IntervalService
 from ..methods.general import General
 from .utils import log_message
+from datetime import datetime
 from pony import orm
 from . import utils
 
@@ -19,15 +19,15 @@ def sync_masternodes():
 
         knows_masternodes = MasternodeService.list(True)
         for masternode in knows_masternodes:
-            masternode.activetime = timedelta(seconds=0)
             masternode.status = "DISABLED"
+            masternode.activetime = 0
             masternode.active = False
             masternode.rank = None
 
         for masternode in masternodes["result"]:
             lastseen = datetime.fromtimestamp(masternode["lastseen"])
             lastpaid = datetime.fromtimestamp(masternode["lastpaid"])
-            activetime = timedelta(seconds=masternode["activetime"])
+            activetime = masternode["activetime"]
             version = masternode["version"]
             txhash = masternode["txhash"]
             outidx = masternode["outidx"]
