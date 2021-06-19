@@ -30,7 +30,7 @@ def init(blueprint):
 
     @blueprint.route("/docs")
     def docs():
-        return render_template("layout.html")
+        return render_template("pages/api.html")
 
     @blueprint.route("/ext/getmoneysupply")
     @orm.db_session

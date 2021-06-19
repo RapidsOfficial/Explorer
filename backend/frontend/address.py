@@ -20,10 +20,13 @@ def init(blueprint):
                 size, total
             )
 
+            title = f"Address {address.address}"
+
             return render_template(
                 "pages/address.html", address=address,
                 transactions=transactions,
-                pagination=pagination
+                pagination=pagination,
+                title=title
             )
 
         return render_template("pages/404.html")
@@ -50,7 +53,10 @@ def init(blueprint):
                 "balance": float(entry[1])
             })
 
+        title = "Top holders"
+
         return render_template(
             "pages/holders.html", richlist=richlist,
-            pagination=pagination
+            pagination=pagination,
+            title=title
         )

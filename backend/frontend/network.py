@@ -10,8 +10,12 @@ def init(blueprint):
     @orm.db_session
     def network():
         peers = PeerService.list()
+
+        title = "Network peers"
+
         return render_template(
-            "pages/peers.html", peers=peers
+            "pages/peers.html", peers=peers,
+            title=title
         )
 
     @blueprint.route("/masternodes", defaults={"page": 1})
@@ -29,8 +33,10 @@ def init(blueprint):
         )
 
         masternodes = masternodes.page(page, pagesize=size)
+        title = "Masternodes"
 
         return render_template(
             "pages/masternodes.html", masternodes=masternodes,
-            pagination=pagination
+            pagination=pagination,
+            title=title
         )

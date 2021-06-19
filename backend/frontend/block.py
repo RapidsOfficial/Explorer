@@ -21,10 +21,12 @@ def init(blueprint):
         )
 
         chart = IntervalService.list("transactions")
+        title = "Overview"
 
         return render_template(
             "pages/overview.html", pagination=pagination,
-            blocks=blocks, chart=chart
+            blocks=blocks, chart=chart,
+            title=title
         )
 
     @blueprint.route("/block/<string:blockhash>", defaults={"page": 1})
@@ -42,10 +44,13 @@ def init(blueprint):
                 size, total
             )
 
+            title = f"Block #{block.height}"
+
             return render_template(
                 "pages/block.html", block=block,
                 transactions=transactions,
-                pagination=pagination
+                pagination=pagination,
+                title=title
             )
 
         return render_template("pages/404.html")

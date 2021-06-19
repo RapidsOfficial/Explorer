@@ -20,9 +20,12 @@ def init(blueprint):
             size, total
         )
 
+        title = "Recent transactions"
+
         return render_template(
             "pages/transactions.html", pagination=pagination,
-            transactions=transactions
+            transactions=transactions,
+            title=title
         )
 
     @blueprint.route("/transaction/<string:txid>")
@@ -30,6 +33,12 @@ def init(blueprint):
     def transaction(txid):
         # ToDo: Add fallback request to node in case if transaction is in mempool
         if (transaction := TransactionService.get_by_txid(txid)):
-            return render_template("pages/transaction.html", transaction=transaction)
+            title = f"Transaction {transaction.txid[:16]}..."
+
+            return render_template(
+                "pages/transaction.html",
+                transaction=transaction,
+                title=title
+            )
 
         return render_template("pages/404.html")

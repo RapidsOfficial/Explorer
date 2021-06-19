@@ -41,6 +41,31 @@
 								<td>{{ transaction.fee }} RPD</td>
 							</tr>
 						{% endif %}
+
+						{% if transaction.coinstake or transaction.coinbase %}
+							{% if transaction.block.reward > 0 %}
+								<tr>
+									<td>Reward</td>
+									<td>{{ transaction.block.reward }} RPD</td>
+								</tr>
+							{% endif %}
+
+							{% if transaction.block.mn > 0 %}
+								<tr>
+									<td>Masternode</td>
+									<td>{{ transaction.block.mn }} RPD</td>
+								</tr>
+							{% endif %}
+
+							{% if transaction.block.mn > 0 %}
+								<tr>
+									<td>Dev fund</td>
+									<td>{{ transaction.block.dev }} RPD</td>
+								</tr>
+							{% endif %}
+
+						{% endif %}
+
 					</tbody>
 				</table>
 			</div>
