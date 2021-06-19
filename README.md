@@ -16,7 +16,21 @@ $ pip3 install -r requirements.txt
 
 2) Copy example config from [docs](docs/) folder and fill proper details.
 
-3) Set up systemd services using example explorer and sync services from [docs](docs/) folder ([tutorial](https://www.digitalocean.com/community/tutorials/how-to-serve-flask-applications-with-gunicorn-and-nginx-on-ubuntu-18-04)).
+3) Set up systemd services using example explorer and sync services from [docs](docs/) folder.
+
+Setup `sync.service`:
+```
+$ sudo nano /etc/systemd/system/sync.service
+$ sudo systemctl start sync
+$ sudo systemctl enable sync
+```
+
+Setup `explorer.service`:
+```
+$ sudo nano /etc/systemd/system/explorer.service
+$ sudo systemctl start sync
+$ sudo systemctl enable sync
+```
 
 4) Enjoy :)
 

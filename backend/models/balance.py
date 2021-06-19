@@ -20,7 +20,7 @@ class Input(db.Entity):
     n = orm.Required(int)
 
     transaction = orm.Required("Transaction")
-    vout = orm.Required("Output")
+    vout = orm.Required("Output", index=True)
 
     def before_delete(self):
         balance = Balance.get(

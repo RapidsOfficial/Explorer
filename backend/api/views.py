@@ -30,7 +30,7 @@ def info():
     block = BlockService.latest_block()
 
     return utils.response({
-        "time": block.created.timestamp(),
+        "time": int(block.created.timestamp()),
         "blockhash": block.blockhash,
         "height": block.height,
         "rewards": block.rewards
