@@ -44,4 +44,20 @@
 	</div>
 
 	{% include "elements/pagination.html" %}
+
+	<script type="text/javascript">
+		// Redirect from old explorer
+		let urlParams = window.location.hash.split("/")
+
+		if (urlParams.length >= 2 && urlParams[0] == "#") {
+			if (urlParams[1] == "block") {window.location.replace("/block/" + urlParams[2])}
+			if (urlParams[1] == "tx") {window.location.replace("/transaction/" + urlParams[2])}
+			if (urlParams[1] == "address") {window.location.replace("/address/" + urlParams[2])}
+			if (urlParams[1] == "movement") {window.location.replace("/transactions")}
+			if (urlParams[1] == "masternode") {window.location.replace("/masternodes")}
+			if (urlParams[1] == "top") {window.location.replace("/holders")}
+			if (urlParams[1] == "peer") {window.location.replace("/network")}
+			if (urlParams[1] == "api") {window.location.replace("/api")}
+		}
+	</script>
 {% endblock content %}
