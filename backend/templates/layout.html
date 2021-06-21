@@ -25,14 +25,46 @@
 			a.logo img {
 				max-width: 240px;
 			}
+
+			.nav {
+				padding: 20px 0px;
+				display: flex;
+				-moz-box-align: center;
+				align-items: center;
+				-moz-box-pack: justify;
+				justify-content: space-between;
+			}
+			.nav .nav-items {
+				display: flex;
+				-moz-box-align: center;
+				align-items: center;
+				-moz-box-pack: justify;
+				justify-content: space-between;
+				z-index: 300;
+				width: 100%;
+			}
+			.nav .nav-buttons {
+				display: flex;
+			}
+			.nav .nav-buttons .logo {
+				margin-right: auto;
+			}
+			.nav .nav-buttons a {
+				border-bottom: 4px solid rgb(255, 255, 255);
+				margin-left: 40px;
+				text-decoration: none;
+			}
+			.nav .nav-buttons a span {
+			    margin: 0px;
+			}
+			.nav-logo {
+				width: 32px;
+				height: 32px;
+				margin-right: 60px;
+			}
 		</style>
 	</head>
 	<body>
-		<div class="text-center mt-3">
-			<a href="/" class="logo">
-				<img src="/static/img/logo_v2.svg">
-			</a>
-		</div>
 		{% include "elements/navbar.html" %}
 
 		{% include "elements/search.html" %}

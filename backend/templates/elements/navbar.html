@@ -1,5 +1,10 @@
-<div class="container">
+<!-- <div class="container">
 	<div class="row">
+		<div class="text-center mt-3">
+			<a href="/" class="logo">
+				<img src="/static/img/logo_v2.svg">
+			</a>
+		</div>
 		<div class="col-12 mb-3 mt-3 text-center nav-links">
 			<a href="{{ url_for('frontend.home') }}">Overview</a>
 			<a href="{{ url_for('frontend.transactions') }}">Transactions</a>
@@ -7,6 +12,36 @@
 			<a href="{{ url_for('frontend.network') }}">Network</a>
 			<a href="{{ url_for('frontend.masternodes') }}">Masternodes</a>
 			<a href="{{ url_for('frontend.docs') }}">API</a>
+		</div>
+	</div>
+</div> -->
+
+<div class="container">
+	<div class="nav">
+		<div class="nav-items">
+			<a href="/">
+				<img class="nav-logo" src="/static/img/logo.svg">
+			</a>
+			<div class="nav-buttons">
+				<a href="{{ url_for('frontend.home') }}">
+					<span>Overview</span>
+				</a>
+				<a href="{{ url_for('frontend.transactions') }}">
+					<span>Transactions</span>
+				</a>
+				<a href="{{ url_for('frontend.holders') }}">
+					<span>Richlist</span>
+				</a>
+				<a href="{{ url_for('frontend.network') }}">
+					<span>Network</span>
+				</a>
+				<a href="{{ url_for('frontend.masternodes') }}">
+					<span>Masternodes</span>
+				</a>
+				<a href="{{ url_for('frontend.docs') }}">
+					<span>API</span>
+				</a>
+			</div>
 		</div>
 	</div>
 </div>
