@@ -1,4 +1,5 @@
-from ..constants import REDUCTION_HEIGHT, BURN_ADDRESS, CURRENCY
+from ..constants import REDUCTION_HEIGHT, BURN_ADDRESS
+from ..constants import CURRENCY, DECIMALS
 from ..services import TransactionService
 from .utils import log_block, log_message
 from ..methods.general import General
@@ -139,7 +140,7 @@ def sync_blocks():
 
                 amount = utils.amount(vout["value"])
                 if height <= REDUCTION_HEIGHT:
-                    amount /= 1000
+                    amount = round(amount / 1000, DECIMALS)
 
                 # ToDo: Add token support here
                 currency = CURRENCY
@@ -149,14 +150,14 @@ def sync_blocks():
                 address.transactions.add(transaction)
                 address.lastactive = created
 
-                if currency == CURRENCY:
-                    output_amount += amount
-
                 output = OutputService.create(
                     transaction, amount, vout["type"],
                     address, vout["script"],
                     vout["n"], currency
                 )
+
+                if currency == CURRENCY:
+                    output_amount += output.amount
 
                 balance = BalanceService.get_by_currency(address, currency)
                 balance.balance += output.amount
@@ -164,37 +165,37 @@ def sync_blocks():
 
                 if currency == CURRENCY:
                     if address.address == BURN_ADDRESS:
-                        burn_amount += amount
+                        burn_amount += output.amount
 
                     if coinstake:
                         if block.height > REDUCTION_HEIGHT and index == 1:
-                            dev += amount
+                            dev += output.amount
 
                         else:
                             if reward_address is None or reward_address == address:
                                 reward_address = address
-                                reward += amount
+                                reward += output.amount
 
                         if block.height > REDUCTION_HEIGHT:
                             if index == output_count - 1:
-                                mn += amount
+                                mn += output.amount
 
                             if index == output_count:
-                                dev += amount
+                                dev += output.amount
 
                         else:
                             if index == output_count:
-                                mn += amount
+                                mn += output.amount
 
                     elif coinbase:
-                        reward += amount
+                        reward += output.amount
 
             if coinbase or coinstake or burn_amount > 0:
                 supply = StatsService.get_by_key("supply")
                 supply.value -= burn_amount
 
             if coinbase or coinstake:
-                supply.value += reward + dev + mn
+                supply.value += float(reward + dev + mn)
 
             else:
                 transaction.fee = input_amout - output_amount
