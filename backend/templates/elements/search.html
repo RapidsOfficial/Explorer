@@ -1,6 +1,8 @@
 <form id="search" action="{{ url_for('frontend.search') }}">
-	<div class="input-group">
+	<div class="search-wrapper">
 		<input type="text" class="form-control" placeholder="Block, hash, transaction, etc..." name="query">
-		<button class="btn btn-outline-secondary">Search</button type="submit">
+		<button type="submit">
+			<img src="/static/img/search.svg">
+		</button>
 	</div>
 </form>
