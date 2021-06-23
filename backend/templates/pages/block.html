@@ -3,7 +3,7 @@
 	<h1 class="h3 text-gray-800">Block</h1>
 
 	<div id="block-info-table">
-		<div class="card mb-3">
+		<div class="mb-3">
 			<div class="table-responsive">
 				<table class="table table-borderless table-md table-striped mb-0">
 					<tbody>
@@ -24,7 +24,7 @@
 
 							{% if block.previous_block %}
 								<td>
-									<a href="{{ url_for('frontend.block', blockhash=block.previous_block.blockhash) }}">
+									<a href="{{ url_for('frontend.block', blockhash=block.previous_block.blockhash) }}" class="font-monospace">
 										{{ block.previous_block.blockhash }}
 									</a>
 								</td>
@@ -39,7 +39,7 @@
 
 							{% if block.next_block %}
 								<td>
-									<a href="{{ url_for('frontend.block', blockhash=block.next_block.blockhash) }}">
+									<a href="{{ url_for('frontend.block', blockhash=block.next_block.blockhash) }}" class="font-monospace">
 										{{ block.next_block.blockhash }}
 									</a>
 								</td>
