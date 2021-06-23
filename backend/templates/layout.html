@@ -71,6 +71,21 @@
 				word-break: break-word;
 			}
 
+			.search-block {
+				align-items: center;
+				display: flex;
+			}
+			.search-wrapper {
+				margin-left: auto;
+			}
+			#search input {
+				width: 300px;
+				transition: all 0.2s;
+			}
+			#search input:focus {
+				width: 370px;
+			}
+
 			@media (max-width: 767px) {
 				.nav .nav-buttons {
 					position: fixed;
@@ -101,13 +116,59 @@
 					top: 20px;
 					right: 20px;
 				}
+				.search-block {
+					flex-flow: column wrap;
+					align-items: normal;
+				}
+				.search-wrapper {
+					margin-left: 0px;
+				}
+				#search input, #search input:focus {
+					max-width: 100%;
+					width: auto;
+				}
+			}
+
+			table {
+			    width: 100%;
+			    border-collapse: separate;
+			    /*border-spacing: 0px 4px;*/
+			    border-spacing: 0px;
+			    font-size: 14px;
+			}
+			tr:nth-child(2n+1) {
+				background-color: rgba(0,0,0,.05);
+			}
+			td {
+			    padding: 8px 20px;
+			    word-break: break-word;
+			}
+
+			th {
+			    background-color: rgb(255, 255, 255);
+			    border-bottom: 1px solid rgb(238, 238, 238);
+			    text-align: left;
+			    padding: 6px 20px;
+			}
+			@media (max-width: 575px) {
+				thead {
+					display: none;
+				}
+				td {
+					display: table;
+					padding: 3px 20px;
+				}
+				td.non-mobile {
+					display: none;
+				}
+				.search-wrapper {
+					margin-bottom: 20px;
+				}
 			}
 		</style>
 	</head>
 	<body>
 		{% include "elements/navbar.html" %}
-
-		{% include "elements/search.html" %}
 
 		<div class="container">
 			{% block content %}{% endblock %}

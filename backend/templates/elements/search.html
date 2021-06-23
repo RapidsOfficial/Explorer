@@ -1,13 +1,6 @@
-<div class="container">
-	<div class="row">
-		<div class="col-12">
-			<form action="{{ url_for('frontend.search') }}">
-				<div class="input-group mb-3">
-					<input type="text" class="form-control" placeholder="Block, hash, transaction, etc..." name="query">
-					
-					<button class="btn btn-outline-secondary">Search</button type="submit">
-				</div>
-			</form>
-		</div>
+<form id="search" action="{{ url_for('frontend.search') }}">
+	<div class="input-group">
+		<input type="text" class="form-control" placeholder="Block, hash, transaction, etc..." name="query">
+		<button class="btn btn-outline-secondary">Search</button type="submit">
 	</div>
-</div>
+</form>

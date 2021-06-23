@@ -2,17 +2,23 @@
 {% block content %}
 	<div class="row">
 		<div class="col-12">
-			<h1 class="h3 mb-3 text-gray-800">Recent blocks</h1>
+			<div class="mt-2 mb-1 search-block">
+				<h1 class="h3 text-gray-800">Recent blocks</h1>
 
-			<div class="card mb-3">
+				<div class="search-wrapper">
+					{% include "elements/search.html" %}
+				</div>
+			</div>
+
+			<div class="mb-3">
 				<div class="table-responsive">
-					<table id="blocks-table" class="table table-borderless table-md table-striped text-center mb-0">
+					<table id="blocks-table" class="mb-0">
 						<thead>
 							<tr>
 								<th scope="col">Height</th>
-								<th scope="col">Time</th>
 								<th scope="col">Hash</th>
 								<th scope="col">Transactions</th>
+								<th scope="col">Time</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -22,15 +28,15 @@
 										{{ block.height }}
 									</td>
 									<td>
-										{{ block.created }}
-									</td>
-									<td>
 										<a href="{{ url_for('frontend.block', blockhash=block.blockhash) }}">
 											{{ block.blockhash }}
 										</a>
 									</td>
-									<td>
+									<td class="non-mobile">
 										{{ block.txcount }}
+									</td>
+									<td>
+										{{ block.created }}
 									</td>
 								</tr>
 							{% endfor %}

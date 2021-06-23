@@ -23,7 +23,7 @@ def init(blueprint):
 
                 return redirect(url_for("frontend.transaction", txid=args["query"]))
 
-            else:
+            elif len(args["query"]) == 34:
                 return redirect(url_for("frontend.address", address=args["query"]))
 
         return redirect(url_for("frontend.home"))
