@@ -20,8 +20,8 @@ def create_app():
         def amount_filter(amount):
             result = ("%.8f" % amount).rstrip("0")
 
-            if not result.split(".")[1]:
-                result += "0"
+            if result[-1] == ".":
+                result = result[:-1]
 
             return result
 
