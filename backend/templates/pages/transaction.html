@@ -9,20 +9,19 @@
 					<tbody>
 						<tr>
 							<td>Transaction Hash</td>
-							<td id="tx-info-hash" data-tx-info-hash="{{ transaction.txid }}">{{ transaction.txid }}</td>
+							<td id="tx-info-hash" data-tx-info-hash="{{ transaction.txid }}" class="font-monospace">{{ transaction.txid }}</td>
 						</tr>
-						
-							<tr>
-								<td>Timestamp</td>
-								<td>{{ transaction.block.created }} (<b>{{ transaction.block.timestamp }}</b>)</td>
-							</tr>
-						
+						<tr>
+							<td>Timestamp</td>
+							<td>{{ transaction.block.created }} (<b>{{ transaction.block.timestamp }}</b>)</td>
+						</tr>
 						<tr>
 							<td>Height</td>
 							<td>
-								<a href="{{ url_for('frontend.block', blockhash=transaction.block.blockhash) }}">
-									{{ transaction.block.height }}
-								</a> (<b>Confirmations {{ transaction.block.confirmations }}</b>)
+								<a href="{{ url_for('frontend.block', blockhash=transaction.block.blockhash) }}" class="font-monospace">{{ transaction.block.height }}</a>
+								<span>
+									(<b>Confirmations {{ transaction.block.confirmations }}</b>)
+								</span>
 							</td>
 						</tr>
 						<tr>
@@ -73,7 +72,7 @@
 	</div>
 
 	<div class="card mb-3">
-		<div class="card-body">
+		<div class="card-body fz-14">
 			{% include "elements/details.html" %}
 		</div>
 	</div>

@@ -4,7 +4,7 @@
 		<ul class="list-flat mt-1">
 			{% for vin in transaction.simple_vin %}
 				<li>
-					<a href="{{ url_for('frontend.address', address=vin.address.address) }}">
+					<a href="{{ url_for('frontend.address', address=vin.address.address) }}" class="font-monospace">
 						{{ vin.address.address }}
 					</a>
 					<div>
@@ -19,7 +19,7 @@
 		<ul class="list-flat mt-1">
 			{% for vout in transaction.simple_vout %}
 				<li>
-					<a href="{{ url_for('frontend.address', address=vout.address.address) }}">
+					<a href="{{ url_for('frontend.address', address=vout.address.address) }}" class="font-monospace">
 						{{ vout.address.address }}
 					</a>
 					<div>

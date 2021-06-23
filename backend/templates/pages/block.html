@@ -17,7 +17,7 @@
 						</tr>
 						<tr>
 							<td>Block Hash</td>
-							<td id="block-info-hash" data-block-info-hash="{{ block.blockhash }}">{{ block.blockhash }}</td>
+							<td id="block-info-hash" data-block-info-hash="{{ block.blockhash }}" class="font-monospace">{{ block.blockhash }}</td>
 						</tr>
 						<tr>
 							<td>Previous Block</td>
@@ -52,7 +52,9 @@
 						<tr>
 							<td>Merkle Root</td>
 							<td>
-								{{ block.merkleroot }}
+								<span class="font-monospace">
+									{{ block.merkleroot }}
+								</span>
 							</td>
 						</tr>
 						<tr>
@@ -73,9 +75,9 @@
 		</div>
 	</div>
 	{% for transaction in transactions %}
-		<div class="card mb-3">
+		<div class="card mb-3 fz-14">
 			<div class="card-header">
-				<a href="{{ url_for('frontend.transaction', txid=transaction.txid) }}">
+				<a href="{{ url_for('frontend.transaction', txid=transaction.txid) }}" class="font-monospace">
 					{{ transaction.txid }}
 				</a>
 			</div>

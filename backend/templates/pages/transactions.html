@@ -24,7 +24,7 @@
 										{{ transaction.block.height }}
 									</td>
 									<td>
-										<a href="{{ url_for('frontend.transaction', txid=transaction.txid) }}">
+										<a href="{{ url_for('frontend.transaction', txid=transaction.txid) }}" class="font-monospace">
 											{{ transaction.txid }}
 										</a>
 									</td>

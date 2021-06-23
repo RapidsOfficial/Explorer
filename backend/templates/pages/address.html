@@ -12,7 +12,9 @@
 								<tr>
 									<td>Address</td>
 									<td>
-										{{ address.address }}
+										<span class="font-monospace">
+											{{ address.address }}
+										</span>
 									</td>
 								</tr>
 								{% for balance in address.balances %}
@@ -30,9 +32,9 @@
 			</div>
 
 			{% for transaction in transactions %}
-				<div class="card mb-3">
+				<div class="card mb-3 fz-14">
 					<div class="card-header">
-						<a href="{{ url_for('frontend.transaction', txid=transaction.txid) }}">
+						<a href="{{ url_for('frontend.transaction', txid=transaction.txid) }}" class="font-monospace">
 							{{ transaction.txid }}
 						</a>
 					</div>
