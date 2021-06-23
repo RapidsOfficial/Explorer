@@ -27,7 +27,7 @@
 						<tr>
 							<td>Amount Transferred</td>
 							<td>
-								<span>{{ transaction.amount }}</span> <b>RPD</b>
+								<span>{{ transaction.amount|amount }}</span> <b>RPD</b>
 							</td>
 						</tr>
 						<tr>
@@ -45,21 +45,21 @@
 							{% if transaction.block.reward > 0 %}
 								<tr>
 									<td>Reward</td>
-									<td>{{ transaction.block.reward }} RPD</td>
+									<td>{{ transaction.block.reward|amount }} RPD</td>
 								</tr>
 							{% endif %}
 
 							{% if transaction.block.mn > 0 %}
 								<tr>
 									<td>Masternode</td>
-									<td>{{ transaction.block.mn }} RPD</td>
+									<td>{{ transaction.block.mn|amount }} RPD</td>
 								</tr>
 							{% endif %}
 
 							{% if transaction.block.mn > 0 %}
 								<tr>
 									<td>Dev fund</td>
-									<td>{{ transaction.block.dev }} RPD</td>
+									<td>{{ transaction.block.dev|amount }} RPD</td>
 								</tr>
 							{% endif %}
 

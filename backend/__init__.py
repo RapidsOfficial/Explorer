@@ -16,6 +16,15 @@ def create_app():
         app.register_blueprint(bulwark)
         app.register_blueprint(api)
 
+        @app.template_filter("amount")
+        def amount_filter(amount):
+            result = ("%.8f" % amount).rstrip("0")
+
+            if not result.split(".")[1]:
+                result += "0"
+
+            return result
+
         @app.errorhandler(404)
         def page_not_found(e):
             return render_template(

@@ -29,7 +29,7 @@
 										</a>
 									</td>
 									<td>
-										<span>{{ transaction.amount }}</span> <b>RPD</b>
+										<span>{{ transaction.amount|amount }}</span> <b>RPD</b>
 										{% if transaction.coinbase or transaction.coinstake %}
 											💎
 										{% endif %}

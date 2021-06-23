@@ -21,7 +21,7 @@
 									<tr>
 										<td>Balance {{ balance.currency }}</td>
 										<td>
-											<span>{{ balance.balance }}</span> <b>{{ balance.currency }}</b>
+											<span>{{ balance.balance|amount }}</span> <b>{{ balance.currency }}</b>
 										</td>
 									</tr>
 								{% endfor %}
