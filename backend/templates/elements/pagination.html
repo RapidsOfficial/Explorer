@@ -8,7 +8,7 @@
 			{% endif %}
 
 			{% for page in pagination.pages %}
-				<a href="{{ url_for(pagination.url, page=page) }}" class="button {% if page == pagination.current %}active{% endif %} {% if page == pagination.current - 1 or page == pagination.current + 1 %}show-xs{% endif %}">
+				<a href="{{ url_for(pagination.url, page=page) }}" class="button {% if page == pagination.current %}not-active{% endif %}">
 					{{ page }}
 				</a>
 			{% endfor %}
