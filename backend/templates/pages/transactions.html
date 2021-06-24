@@ -29,10 +29,12 @@
 										</a>
 									</td>
 									<td>
-										<span>{{ transaction.amount|amount }}</span> <b>RPD</b>
-										{% if transaction.coinbase or transaction.coinstake %}
-											💎
-										{% endif %}
+										<div class="reward-wrapper">
+											<span>{{ transaction.amount|amount }} <b>RPD</b></span>
+											{% if transaction.coinbase or transaction.coinstake %}
+												<img class="reward-icon" src="/static/img/reward.svg">
+											{% endif %}
+										</div>
 									</td>
 									<td>
 										{{ transaction.block.created }}

@@ -12,7 +12,7 @@
 
 		<style type="text/css">
 			body {
-				margin-top: 80px;
+				/*margin-top: 80px;*/
 			}
 			.nav-links a {
 				display: inline-block;
@@ -70,9 +70,19 @@
 			.nav .nav-buttons a span {
 			    margin: 0px;
 			}
-			.nav-logo {
+
+			#sidebar a.nav-logo span {
+				font-size: 25px;
+				margin-left: 5px;
+			}
+			#sidebar a.nav-logo img {
 				width: 32px;
 				height: 32px;
+			}
+
+			#sidebar a img.icon {
+				height: 16px;
+				margin-right: 10px;
 			}
 
 			#burger, #close {
@@ -96,7 +106,7 @@
 				position: relative;
 			}
 			#search input {
-				width: 300px;
+				width: 100%;
 			}
 			#search button {
 				position: absolute;
@@ -205,15 +215,53 @@
 				text-decoration: none;
 				color: black;
 			}
+
+			#sidebar {
+				width: 240px;
+				background: black;
+				color: white;
+				display: flex;
+				flex-direction: column;
+				padding: 6px 0px;
+				min-height: 100vh;
+				position: fixed;
+				bottom: 0;
+				left: 0;
+				top: 0;
+			}
+			#sidebar a {
+				display: flex;
+				align-items: center;
+				color: white;
+				text-decoration: none;
+				padding: 10px 25px;
+			}
+			#content {
+				margin-left: 240px; 
+			}
+			.reward-wrapper {
+				display: flex;
+				align-items: center;
+			}
+			.reward-icon {
+				height: 20px;
+				margin-left: 5px;
+			}
 		</style>
 	</head>
 	<body>
-		{% include "elements/navbar.html" %}
+		<!-- {% include "elements/navbar.html" %} -->
 
-		<div class="container">
-			{% block content %}{% endblock %}
+		{% include "elements/sidebar.html" %}
+
+		<div id="content">
+			<div class="container">
+				{% include "elements/search.html" %}
+
+				{% block content %}{% endblock %}
+			</div>
+
+			{% include "elements/footer.html" %}
 		</div>
-
-		{% include "elements/footer.html" %}
 	</body>
 </html>

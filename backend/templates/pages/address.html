@@ -74,24 +74,26 @@
 	</div>
 
 	{% if pagination %}
-		{% if pagination.pages|length > 1 %}
-			{% if pagination.previous %}
-				<a href="{{ url_for(pagination.url, page=pagination.previous, address=address.address) }}" class="button">
-					<i class="fas fa-fw fa-chevron-left"></i>
-				</a>
-			{% endif %}
+		<div class="pagination">
+			{% if pagination.pages|length > 1 %}
+				{% if pagination.previous %}
+					<a href="{{ url_for(pagination.url, page=pagination.previous, address=address.address) }}" class="button">
+						<i class="fas fa-fw fa-chevron-left"></i>
+					</a>
+				{% endif %}
 
-			{% for page in pagination.pages %}
-				<a href="{{ url_for(pagination.url, page=page, address=address.address) }}" class="button {% if page == pagination.current %}active{% endif %} {% if page == pagination.current - 1 or page == pagination.current + 1 %}show-xs{% endif %}">
-					{{ page }}
-				</a>
-			{% endfor %}
+				{% for page in pagination.pages %}
+					<a href="{{ url_for(pagination.url, page=page, address=address.address) }}" class="button {% if page == pagination.current %}not-active{% endif %}">
+						{{ page }}
+					</a>
+				{% endfor %}
 
-			{% if pagination.next %}
-				<a href="{{ url_for(pagination.url, page=pagination.next, address=address.address) }}" class="button">
-					<i class="fas fa-fw fa-chevron-right"></i>
-				</a>
+				{% if pagination.next %}
+					<a href="{{ url_for(pagination.url, page=pagination.next, address=address.address) }}" class="button">
+						<i class="fas fa-fw fa-chevron-right"></i>
+					</a>
+				{% endif %}
 			{% endif %}
-		{% endif %}
+		</div>
 	{% endif %}
 {% endblock content %}

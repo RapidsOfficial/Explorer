@@ -1,0 +1,32 @@
+<div id="sidebar">
+	<a class="nav-logo" href="/">
+		<img src="/static/img/logo.svg">
+		<span>Rapids</span>
+	</a>
+	<div class="nav-buttons">
+		<a href="{{ url_for('frontend.home') }}">
+			<img class="icon" src="/static/img/home.svg">
+			<span>Overview</span>
+		</a>
+		<a href="{{ url_for('frontend.transactions') }}">
+			<img class="icon" src="/static/img/transactions.svg">
+			<span>Transactions</span>
+		</a>
+		<a href="{{ url_for('frontend.holders') }}">
+			<img class="icon" src="/static/img/holders.svg">
+			<span>Holders</span>
+		</a>
+		<a href="{{ url_for('frontend.network') }}">
+			<img class="icon" src="/static/img/network.svg">
+			<span>Network</span>
+		</a>
+		<a href="{{ url_for('frontend.masternodes') }}">
+			<img class="icon" src="/static/img/servers.svg">
+			<span>Masternodes</span>
+		</a>
+		<a href="{{ url_for('frontend.docs') }}">
+			<img class="icon" src="/static/img/docs.svg">
+			<span>API</span>
+		</a>
+	</div>
+</div>
