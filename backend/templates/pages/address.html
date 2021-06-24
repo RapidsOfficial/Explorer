@@ -17,9 +17,33 @@
 										</span>
 									</td>
 								</tr>
+								<tr>
+									<td>Created</td>
+									<td>
+										{{ address.created }}
+									</td>
+								</tr>
+								<tr>
+									<td>Last active</td>
+									<td>
+										{{ address.lastactive }}
+									</td>
+								</tr>
 								{% for balance in address.balances %}
 									<tr>
-										<td>Balance {{ balance.currency }}</td>
+										<td>Received</td>
+										<td>
+											<span>{{ balance.received|amount }}</span> <b>{{ balance.currency }}</b>
+										</td>
+									</tr>
+									<tr>
+										<td>Sent</td>
+										<td>
+											<span>{{ balance.sent|amount }}</span> <b>{{ balance.currency }}</b>
+										</td>
+									</tr>
+									<tr>
+										<td>Balance</td>
 										<td>
 											<span>{{ balance.balance|amount }}</span> <b>{{ balance.currency }}</b>
 										</td>
