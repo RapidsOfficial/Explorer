@@ -1,8 +1,32 @@
-<form id="search" class="mt-3 mb-3" action="{{ url_for('frontend.search') }}">
-	<div class="search-wrapper">
-		<input type="text" class="form-control" placeholder="Search for..." name="query">
-		<button type="submit">
-			<img src="/static/img/search.svg">
-		</button>
-	</div>
-</form>
+<div class="search-nav">
+	<a href="/" class="logo">
+		<img src="/static/img/logo.svg">
+	</a>
+	<form id="search" class="mt-3 mb-3" action="{{ url_for('frontend.search') }}">
+		<div class="search-wrapper">
+			<input type="text" class="form-control" placeholder="Search for..." name="query">
+			<button type="submit">
+				<img src="/static/img/search.svg">
+			</button>
+		</div>
+	</form>
+	<a href="#" id="burger">
+		<img src="/static/img/menu.svg">
+	</a>
+</div>
+
+<script type="text/javascript">
+	let burger = document.getElementById("burger")
+	let sidebar = document.getElementById("sidebar")
+	let underline = document.getElementById("underline")
+
+	burger.onclick = function() {
+		underline.classList.add("visible")
+		sidebar.classList.add("visible")
+	}
+
+	underline.onclick = function() {
+		underline.classList.remove("visible")
+		sidebar.classList.remove("visible")
+	}
+</script>

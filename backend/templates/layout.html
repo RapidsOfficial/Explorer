@@ -11,9 +11,6 @@
 		<title>{% if title %}{{ title }} | {% endif %}Rapids Explorer</title>
 
 		<style type="text/css">
-			body {
-				/*margin-top: 80px;*/
-			}
 			.nav-links a {
 				display: inline-block;
 				padding: 0 10px;
@@ -27,48 +24,6 @@
 			}
 			a.logo img {
 				max-width: 240px;
-			}
-
-			.nav-wrapper {
-				width: 100%;
-				padding: 0px;
-				position: fixed;
-				z-index: 100;
-				top: 0px;
-				left: 0px;
-				right: 0px;
-				background: white;
-			}
-
-			.nav {
-				padding: 20px 0px;
-				display: flex;
-				-moz-box-align: center;
-				align-items: center;
-				-moz-box-pack: justify;
-				justify-content: space-between;
-			}
-			.nav .nav-items {
-				display: flex;
-				-moz-box-align: center;
-				align-items: center;
-				-moz-box-pack: justify;
-				justify-content: space-between;
-				z-index: 300;
-				width: 100%;
-			}
-			.nav .nav-buttons {
-				display: flex;
-			}
-			.nav .nav-buttons a {
-				margin-right: 30px;
-				text-decoration: none;
-			}
-			.nav .nav-buttons a:last-child {
-				margin-right: 0px;
-			}
-			.nav .nav-buttons a span {
-			    margin: 0px;
 			}
 
 			#sidebar a.nav-logo span {
@@ -101,6 +56,9 @@
 				align-items: center;
 				display: flex;
 			}
+			#search {
+				flex: 1;
+			}
 			#search .search-wrapper {
 				display: flex;
 				position: relative;
@@ -125,28 +83,66 @@
 				height: 18px;
 			}
 
+			.search-nav {
+				display: flex;
+				align-items: center;
+			}
+			.search-nav .logo {
+				margin-right: 15px;
+				display: none;
+			}
+			.search-nav .logo img {
+				height: 32px;
+			}
+
+			.card {
+				border-radius: 0px;
+			}
+			.fz-14 {
+				font-size: 14px;
+			}
+			.not-active {
+				pointer-events: none;
+				cursor: default;
+				text-decoration: none;
+				color: black;
+			}
+
+			#sidebar {
+				width: 240px;
+				background: black;
+				color: white;
+				display: flex;
+				flex-direction: column;
+				transition: all 0.2s;
+				padding: 6px 0px;
+				min-height: 100vh;
+				position: fixed;
+				z-index: 999;
+				bottom: 0;
+				left: 0;
+				top: 0;
+			}
+			#sidebar a {
+				display: flex;
+				align-items: center;
+				color: white;
+				text-decoration: none;
+				padding: 10px 25px;
+			}
+			#content {
+				margin-left: 240px; 
+			}
+			.reward-wrapper {
+				display: flex;
+				align-items: center;
+			}
+			.reward-icon {
+				height: 20px;
+				margin-left: 5px;
+			}
+
 			@media (max-width: 991px) {
-				.nav .nav-buttons {
-					position: fixed;
-					top: 0;
-					bottom: 0;
-					left: 0;
-					right: 0;
-					flex-flow: column wrap;
-					justify-content: center;
-					align-content: center;
-					background: white;
-					display: none;
-				}
-				.nav .nav-buttons.visible {
-					display: flex;
-					z-index: 10;
-				}
-				.nav .nav-buttons a {
-					padding: 5px;
-					margin: 0px;
-					font-size: 18px;
-				}
 				#burger {
 					display: block;
 				}
@@ -156,17 +152,42 @@
 					top: 20px;
 					right: 20px;
 				}
-				#search {
-					flex: 1;
-					margin: 0px 20px;
-				}
-				#search input {
-					width: 100%;
-					flex: 1;
-				}
 				#search button img {
 					background: white;
 				}
+				#burger {
+					margin-left: 15px;
+				}
+
+				#sidebar {
+					left: -240px;
+				}
+				#sidebar.visible {
+					left: 0;
+				}
+				#underline {
+					background: black;
+					position: absolute;
+					transition: all 0.2s;
+					z-index: -1;
+					opacity: 0;
+					bottom: 0;
+					right: 0;
+					left: 0;
+					top: 0;
+				}
+				#underline.visible {
+					display: block;
+					opacity: 0.5;
+					z-index: 888;
+				}
+				#content {
+					margin-left: 0px;
+				}
+				.search-nav .logo {
+					display: block;
+				}
+
 			}
 
 			table {
@@ -202,56 +223,9 @@
 					display: none;
 				}
 			}
-
-			.card {
-				border-radius: 0px;
-			}
-			.fz-14 {
-				font-size: 14px;
-			}
-			.not-active {
-				pointer-events: none;
-				cursor: default;
-				text-decoration: none;
-				color: black;
-			}
-
-			#sidebar {
-				width: 240px;
-				background: black;
-				color: white;
-				display: flex;
-				flex-direction: column;
-				padding: 6px 0px;
-				min-height: 100vh;
-				position: fixed;
-				bottom: 0;
-				left: 0;
-				top: 0;
-			}
-			#sidebar a {
-				display: flex;
-				align-items: center;
-				color: white;
-				text-decoration: none;
-				padding: 10px 25px;
-			}
-			#content {
-				margin-left: 240px; 
-			}
-			.reward-wrapper {
-				display: flex;
-				align-items: center;
-			}
-			.reward-icon {
-				height: 20px;
-				margin-left: 5px;
-			}
 		</style>
 	</head>
 	<body>
-		<!-- {% include "elements/navbar.html" %} -->
-
 		{% include "elements/sidebar.html" %}
 
 		<div id="content">
