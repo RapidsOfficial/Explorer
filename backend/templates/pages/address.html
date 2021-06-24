@@ -7,7 +7,7 @@
 			<div id="address-info-table">
 				<div class="mb-3">
 					<div class="table-responsive">
-						<table class="table table-borderless table-md table-striped mb-0">
+						<table class="mb-0">
 							<tbody>
 								<tr>
 									<td>Address</td>
@@ -61,7 +61,7 @@
 						<a href="{{ url_for('frontend.transaction', txid=transaction.txid) }}" class="font-monospace">
 							{{ transaction.txid }}
 						</a>
-						<span class="float-end">
+						<span class="float-md-end d-sm-block">
 							{{ transaction.block.created }}
 						</span>
 					</div>
