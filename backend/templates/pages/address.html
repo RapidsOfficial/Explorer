@@ -61,6 +61,9 @@
 						<a href="{{ url_for('frontend.transaction', txid=transaction.txid) }}" class="font-monospace">
 							{{ transaction.txid }}
 						</a>
+						<span class="float-end">
+							{{ transaction.block.created }}
+						</span>
 					</div>
 					<div class="card-body">
 						{% include "elements/details.html" %}

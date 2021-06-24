@@ -25,5 +25,5 @@ class Address(db.Entity):
 
     @property
     def txs(self):
-        transactions = self.transactions.order_by(1)
+        transactions = self.transactions.order_by(-1)
         return transactions
