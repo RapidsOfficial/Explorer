@@ -102,6 +102,40 @@ def block(blockhash):
 
     return "Unable to find the block!"
 
+@blueprint.route("/block/<int:height>", methods=["GET"])
+@orm.db_session
+def block_height(height):
+    if (block := BlockService.get_by_height(height)):
+        prev = block.previous_block
+        transactions = []
+
+        for transaction in block.txs:
+            transactions.append({
+                "txId": transaction.txid,
+                "blockHeight": transaction.block.height,
+                "date": transaction.block.created.isoformat(),
+                "isReward": transaction.is_reward,
+                "addressesIn": transaction.input_amount,
+                "addressesOut": transaction.output_amount,
+            })
+
+        return {
+            "hash": block.blockhash,
+            "height": block.height,
+            "confirmations": block.confirmations,
+            "createdAt": block.created.isoformat(),
+            "bits": hex(block.bits)[2:],
+            "merkle": block.merkleroot,
+            "nonce": block.nonce,
+            "prev": prev.blockhash if prev else None,
+            "size": block.size,
+            "ver": block.version,
+            "isConfirmed": True,
+            "txs": transactions
+        }
+
+    return "Unable to find the block!"
+
 @blueprint.route("/block/average", methods=["GET"])
 def block_average():
     return "Not implemented"

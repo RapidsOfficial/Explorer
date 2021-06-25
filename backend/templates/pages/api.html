@@ -1,10 +1,80 @@
 {% extends "layout.html" %}
 {% block content %}
 	<div class="row">
-		<div class="col-12 text-center">
-			<h1 class="mb-3 text-gray-800">
-				Work in progress...
-			</h1>
+		<div class="col-12">
+			<h1 class="h3 text-gray-800">API Documentation</h1>
+			<p>
+				This is documentation for legacy API backported from Bulwark.
+			</p>
+			<div class="mb-3">
+				<b>/api/sendrawtransaction</b> <span class="badge bg-secondary">POST</span>
+				<div>
+					Broadcasts a raw transaction on the network. POST a "rawtx" body parameter to get one of three possible results: { raw, decoded, error } Use the optional "?decrypt=1" in GET to get decoded result.
+				</div>
+			</div>
+			<div class="mb-3">
+				<b>/api/address/[address]</b> <span class="badge bg-secondary">GET</span>
+				<div>
+					Returns information for given address.
+				</div>
+			</div>
+			<div class="mb-3">
+				<b>/api/block/[blockhash][height]</b> <span class="badge bg-secondary">GET</span>
+				<div>
+					Returns block information for the given hash or height.
+				</div>
+			</div>
+			<div class="mb-3">
+				<b>/api/masternodecount</b> <span class="badge bg-secondary">GET</span>
+				<div>
+					Returns masternodes enabled and total counts.
+				</div>
+			</div>
+			<div class="mb-3">
+				<b>/api/peer</b> <span class="badge bg-secondary">GET</span>
+				<div>
+					Returns peer information.
+				</div>
+			</div>
+			<div class="mb-3">
+				<b>/api/supply</b> <span class="badge bg-secondary">GET</span>
+				<div>
+					Returns circulating and total supply information. <br>
+					<a href="https://github.com/coincheckup/crypto-supplies">
+						https://github.com/coincheckup/crypto-supplies
+					</a>
+				</div>
+			</div>
+			<div class="mb-3">
+				<b>/api/tx/latest</b> <span class="badge bg-secondary">GET</span>
+				<div>
+					Returns latest transaction information.
+				</div>
+			</div>
+			<div class="mb-3">
+				<b>/api/tx/[txid]</b> <span class="badge bg-secondary">GET</span>
+				<div>
+					Returns information for the given transaction.
+				</div>
+			</div>
+			<div class="mb-3">
+				<b>/api/getdifficulty</b> <span class="badge bg-secondary">GET</span>
+				<div>
+					Returns the current difficulty.
+				</div>
+			</div>
+			<div class="mb-3">
+				<b>/getblockcount</b> <span class="badge bg-secondary">GET</span>
+				<div>
+					Returns the current block index.
+				</div>
+			</div>
+			<div class="mb-3">
+				<b>/ext/getmoneysupply</b> <span class="badge bg-secondary">GET</span>
+				<div>
+					Returns the current money supply.
+				</div>
+			</div>
 		</div>
 	</div>
 {% endblock content %}
