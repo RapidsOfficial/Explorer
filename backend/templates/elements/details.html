@@ -1,18 +1,22 @@
 <div class="row">
 	<div class="col-md-6 col-sm-12 transaction-from">
-		<span>From:</span>
-		<ul class="list-flat mt-1">
-			{% for vin in transaction.simple_vin %}
-				<li>
-					<a href="{{ url_for('frontend.address', address=vin.address.address) }}" class="font-monospace">
-						{{ vin.address.address }}
-					</a>
-					<div>
-						<b>{{ vin.amount|amount }} RPD</b>
-					</div>
-				</li>
-			{% endfor %}
-		</ul>
+		{% if transaction.coinbase %}
+			<b>Newly generated coins</b>
+		{% else %}
+			<span>From:</span>
+			<ul class="list-flat mt-1">
+				{% for vin in transaction.simple_vin %}
+					<li>
+						<a href="{{ url_for('frontend.address', address=vin.address.address) }}" class="font-monospace">
+							{{ vin.address.address }}
+						</a>
+						<div>
+							<b>{{ vin.amount|amount }} RPD</b>
+						</div>
+					</li>
+				{% endfor %}
+			</ul>
+		{% endif %}
 	</div>
 	<div class="col-md-6 col-sm-12 transaction-to">
 		<span>To:</span>
