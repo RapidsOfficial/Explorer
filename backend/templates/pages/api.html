@@ -7,36 +7,54 @@
 				This is documentation for legacy API backported from Bulwark.
 			</p>
 			<div class="mb-3">
+				<button class="copy-button" text="/api/sendrawtransaction">
+					<img src="/static/img/copy.svg">
+				</button>
 				<b>/api/sendrawtransaction</b> <span class="badge bg-secondary">POST</span>
 				<div>
 					Broadcasts a raw transaction on the network. POST a "rawtx" body parameter to get one of three possible results: { raw, decoded, error } Use the optional "?decrypt=1" in GET to get decoded result.
 				</div>
 			</div>
 			<div class="mb-3">
+				<button class="copy-button" text="/api/address/RburnXXXXXXXXXXXXXXXXXXXXXXXWrcyQK">
+					<img src="/static/img/copy.svg">
+				</button>
 				<b>/api/address/[address]</b> <span class="badge bg-secondary">GET</span>
 				<div>
 					Returns information for given address.
 				</div>
 			</div>
 			<div class="mb-3">
+				<button class="copy-button" text="/api/block/3485880f812b81ab588579bdb069bb13bdc5ad3ceada19641ca254dd7c5e4686">
+					<img src="/static/img/copy.svg">
+				</button>
 				<b>/api/block/[blockhash][height]</b> <span class="badge bg-secondary">GET</span>
 				<div>
 					Returns block information for the given hash or height.
 				</div>
 			</div>
 			<div class="mb-3">
+				<button class="copy-button" text="/api/masternodecount">
+					<img src="/static/img/copy.svg">
+				</button>
 				<b>/api/masternodecount</b> <span class="badge bg-secondary">GET</span>
 				<div>
 					Returns masternodes enabled and total counts.
 				</div>
 			</div>
 			<div class="mb-3">
+				<button class="copy-button" text="/api/peer">
+					<img src="/static/img/copy.svg">
+				</button>
 				<b>/api/peer</b> <span class="badge bg-secondary">GET</span>
 				<div>
 					Returns peer information.
 				</div>
 			</div>
 			<div class="mb-3">
+				<button class="copy-button" text="/api/supply">
+					<img src="/static/img/copy.svg">
+				</button>
 				<b>/api/supply</b> <span class="badge bg-secondary">GET</span>
 				<div>
 					Returns circulating and total supply information. <br>
@@ -46,30 +64,45 @@
 				</div>
 			</div>
 			<div class="mb-3">
+				<button class="copy-button" text="/api/tx/latest">
+					<img src="/static/img/copy.svg">
+				</button>
 				<b>/api/tx/latest</b> <span class="badge bg-secondary">GET</span>
 				<div>
 					Returns latest transaction information.
 				</div>
 			</div>
 			<div class="mb-3">
+				<button class="copy-button" text="/api/tx/094e1a19549054812eead969c70ab1bbf565bc2bd7a475273c037039a5bf6e24">
+					<img src="/static/img/copy.svg">
+				</button>
 				<b>/api/tx/[txid]</b> <span class="badge bg-secondary">GET</span>
 				<div>
 					Returns information for the given transaction.
 				</div>
 			</div>
 			<div class="mb-3">
+				<button class="copy-button" text="/api/getdifficulty">
+					<img src="/static/img/copy.svg">
+				</button>
 				<b>/api/getdifficulty</b> <span class="badge bg-secondary">GET</span>
 				<div>
 					Returns the current difficulty.
 				</div>
 			</div>
 			<div class="mb-3">
-				<b>/getblockcount</b> <span class="badge bg-secondary">GET</span>
+				<button class="copy-button" text="/api/getblockcount">
+					<img src="/static/img/copy.svg">
+				</button>
+				<b>/api/getblockcount</b> <span class="badge bg-secondary">GET</span>
 				<div>
 					Returns the current block index.
 				</div>
 			</div>
 			<div class="mb-3">
+				<button class="copy-button" text="/ext/getmoneysupply">
+					<img src="/static/img/copy.svg">
+				</button>
 				<b>/ext/getmoneysupply</b> <span class="badge bg-secondary">GET</span>
 				<div>
 					Returns the current money supply.
@@ -77,4 +110,20 @@
 			</div>
 		</div>
 	</div>
+
+	<script type="text/javascript">
+		const buttons = document.getElementsByClassName("copy-button")
+		for(let i = 0; i < buttons.length; i++) {
+			let button = buttons[i];
+			button.onclick = function() {
+				let text = button.getAttribute("text")
+				let temp = document.createElement("input");
+				temp.value = window.location.origin + text;
+				document.body.appendChild(temp);
+				temp.select();
+				document.execCommand("copy");
+				temp.remove();
+            }
+        }
+	</script>
 {% endblock content %}
