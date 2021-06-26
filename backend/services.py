@@ -77,19 +77,23 @@ class TransactionService(object):
         )
 
     @classmethod
-    def count(cls):
+    def count(cls, rewards=False):
         # return Transaction.select().count(distinct=False)
-        total = StatsService.get_by_key("total_transactions")
+        transactions_key = "total_transactions" if rewards else "non_reward_transactions"
+        total = StatsService.get_by_key(transactions_key)
         return int(total.value)
 
     @classmethod
-    def transactions(cls, page=1, currency=None, size=100):
+    def transactions(cls, page=1, currency=None, size=100, rewards=False):
         # query = orm.select((o.transaction, sum(o.amount), o.transaction.id) for o in Output if o.currency == currency).distinct()
         # query = query.order_by(-3)
         query = orm.select(t for t in Transaction)
 
         if currency:
             query = query.filter(lambda t: currency in t.currencies)
+
+        if not rewards:
+            query = query.filter(lambda t: t.is_reward is False)
 
         query = query.order_by(-1)
 

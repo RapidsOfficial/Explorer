@@ -7,6 +7,46 @@
 			{% include "elements/chart/transactions.html" %}
 
 			<div class="mb-3">
+				<input type="checkbox" id="show-rewards" name="show-rewards" value="show">
+				<label for="show-rewards">Show reward transactions</label>
+
+				<script type="text/javascript">
+					function setCookie(cName, cValue, expDays) {
+						let date = new Date();
+						date.setTime(date.getTime() + (expDays * 24 * 60 * 60 * 1000));
+						const expires = "expires=" + date.toUTCString();
+						document.cookie = cName + "=" + cValue + "; " + expires + "; path=/; SameSite=None; Secure";
+					}
+
+					function getCookie(cName) {
+						const name = cName + "=";
+						const cDecoded = decodeURIComponent(document.cookie); //to be careful
+						const cArr = cDecoded .split('; ');
+						let res;
+						cArr.forEach(val => {
+							if (val.indexOf(name) === 0) res = val.substring(name.length);
+						})
+						return res;
+					}
+
+					let show = document.getElementById("show-rewards")
+
+					if (getCookie("show-rewards") == undefined) {
+						setCookie("show-rewards", "false", 30)
+					} else if (getCookie("show-rewards") == "false") {
+						show.checked = false
+					} else {
+						show.checked = true
+					}
+
+					show.onclick = function() {
+						setCookie("show-rewards", show.checked, 30)
+						window.location.reload(false)
+					}
+				</script>
+			</div>
+
+			<div class="mb-3">
 				<div class="table-responsive">
 					<table class="mb-0">
 						<thead>

@@ -1,5 +1,5 @@
 from ..services import TransactionService
-from flask import render_template
+from flask import render_template, request
 from .. import fallback
 from pony import orm
 from .. import utils
@@ -10,10 +10,15 @@ def init(blueprint):
     @blueprint.route("/transactions/<int:page>")
     @orm.db_session
     def transactions(page):
-        size = 100
+        cookie = request.cookies.get("show-rewards")
+        show = False
 
-        transactions = TransactionService.transactions(page=page, size=size)
-        count = TransactionService.count()
+        if cookie == "true":
+            show = True
+
+        size = 100
+        transactions = TransactionService.transactions(page=page, size=size, rewards=show)
+        count = TransactionService.count(show)
         total = math.ceil(count / size)
 
         pagination = utils.pagination(
