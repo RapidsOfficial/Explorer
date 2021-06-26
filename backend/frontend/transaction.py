@@ -1,5 +1,6 @@
 from ..services import TransactionService
 from flask import render_template
+from .. import fallback
 from pony import orm
 from .. import utils
 import math
@@ -31,10 +32,13 @@ def init(blueprint):
     @blueprint.route("/transaction/<string:txid>")
     @orm.db_session
     def transaction(txid):
-        # ToDo: Add fallback request to node in case if transaction is in mempool
-        if (transaction := TransactionService.get_by_txid(txid)):
-            title = f"Transaction {transaction.txid[:16]}..."
+        title = f"Transaction {txid[:16]}..."
+        transaction = None
 
+        if not (transaction := TransactionService.get_by_txid(txid)):
+            transaction = fallback.transaction(txid)
+
+        if transaction:
             return render_template(
                 "pages/transaction.html",
                 transaction=transaction,

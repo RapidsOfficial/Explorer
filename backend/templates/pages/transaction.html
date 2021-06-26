@@ -11,17 +11,23 @@
 							<td>Transaction Hash</td>
 							<td id="tx-info-hash" data-tx-info-hash="{{ transaction.txid }}" class="font-monospace">{{ transaction.txid }}</td>
 						</tr>
-						<tr>
-							<td>Timestamp</td>
-							<td>{{ transaction.block.created }} (<b>{{ transaction.block.timestamp }}</b>)</td>
-						</tr>
+						{% if transaction.block %}
+							<tr>
+								<td>Timestamp</td>
+								<td>{{ transaction.block.created }} (<b>{{ transaction.block.timestamp }}</b>)</td>
+							</tr>
+						{% endif %}
 						<tr>
 							<td>Height</td>
 							<td>
-								<a href="{{ url_for('frontend.block', blockhash=transaction.block.blockhash) }}" class="font-monospace">{{ transaction.block.height }}</a>
-								<span>
-									(<b>Confirmations {{ transaction.block.confirmations }}</b>)
-								</span>
+								{% if transaction.block %}
+									<a href="{{ url_for('frontend.block', blockhash=transaction.block.blockhash) }}" class="font-monospace">{{ transaction.block.height }}</a>
+									<span>
+										(<b>Confirmations {{ transaction.block.confirmations }}</b>)
+									</span>
+								{% else %}
+									<b>This transaction is located in mempool</b>
+								{% endif %}
 							</td>
 						</tr>
 						<tr>
@@ -37,7 +43,7 @@
 						{% if transaction.fee > 0 %}
 							<tr>
 								<td>Fee</td>
-								<td>{{ transaction.fee }} RPD</td>
+								<td>{{ transaction.fee|amount }} <b>RPD</b></td>
 							</tr>
 						{% endif %}
 
