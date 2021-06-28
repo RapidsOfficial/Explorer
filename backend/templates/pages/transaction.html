@@ -14,7 +14,7 @@
 						{% if transaction.block %}
 							<tr>
 								<td>Timestamp</td>
-								<td>{{ transaction.block.created }} (<b>{{ transaction.block.timestamp }}</b>)</td>
+								<td>{{ moment(transaction.block.created, True).format('YYYY-MM-DD HH:mm:ss') }} (<b>{{ transaction.block.timestamp }}</b>)</td>
 							</tr>
 						{% endif %}
 						<tr>

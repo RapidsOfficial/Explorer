@@ -13,7 +13,7 @@
 						</tr>
 						<tr>
 							<td>Timestamp</td>
-							<td>{{ block.created }} (<b>{{ block.timestamp }}</b>)</td>
+							<td>{{ moment(block.created, True).format('YYYY-MM-DD HH:mm:ss') }} (<b>{{ block.timestamp }}</b>)</td>
 						</tr>
 						<tr>
 							<td>Block Hash</td>

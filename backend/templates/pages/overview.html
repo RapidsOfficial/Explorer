@@ -30,7 +30,7 @@
 										{{ block.txcount }}
 									</td>
 									<td>
-										{{ block.created }}
+										{{ moment(block.created, True).format('YYYY-MM-DD HH:mm:ss') }}
 									</td>
 								</tr>
 							{% endfor %}
