@@ -77,7 +77,7 @@
 										</div>
 									</td>
 									<td>
-										{{ moment(transaction.block.created, True).format('YYYY-MM-DD HH:mm:ss') }}
+										<span class="local-time" time="{{ transaction.block.created|timestamp }}"></span>
 									</td>
 								</tr>
 							{% endfor %}

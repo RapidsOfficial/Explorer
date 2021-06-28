@@ -29,6 +29,10 @@ def create_app():
 
             return result
 
+        @app.template_filter("timestamp")
+        def timestamp_filter(date):
+            return int(date.timestamp())
+
         @app.errorhandler(404)
         def page_not_found(e):
             return render_template(

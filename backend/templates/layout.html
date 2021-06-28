@@ -10,7 +10,8 @@
 		<link rel="icon" type="image/png" href="https://api.rapidsnetwork.io/static/favicon.png">
 		<title>{% if title %}{{ title }} | {% endif %}Rapids Explorer</title>
 
-		{{ moment.include_moment() }}
+		<script src=https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js></script>
+		<script src=https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.33/moment-timezone.min.js></script>
 
 		<style type="text/css">
 			.nav-links a {
@@ -252,5 +253,17 @@
 
 			{% include "elements/footer.html" %}
 		</div>
+
+		<script type="text/javascript">
+			const timestamps = document.getElementsByClassName("local-time")
+			for(let i = 0; i < timestamps.length; i++) {
+				let timestamp = timestamps[i];
+
+				let date = new Date(timestamp.getAttribute("time") * 1000)
+				let local = moment(date).local().format("YYYY-MM-DD HH:mm:ss");
+
+				timestamp.textContent = local
+	        }
+		</script>
 	</body>
 </html>

@@ -20,13 +20,13 @@
 								<tr>
 									<td>Created</td>
 									<td>
-										{{ moment(address.created, True).format('YYYY-MM-DD HH:mm:ss') }}
+										<span class="local-time" time="{{ address.created|timestamp }}"></span>
 									</td>
 								</tr>
 								<tr>
 									<td>Last active</td>
 									<td>
-										{{ moment(address.lastactive, True).format('YYYY-MM-DD HH:mm:ss') }}
+										<span class="local-time" time="{{ address.lastactive|timestamp }}"></span>
 									</td>
 								</tr>
 								{% for balance in address.balances %}
@@ -62,7 +62,7 @@
 							{{ transaction.txid }}
 						</a>
 						<span class="float-md-end d-sm-block">
-							{{ moment(transaction.block.created, True).format('YYYY-MM-DD HH:mm:ss') }}
+							<span class="local-time" time="{{ transaction.block.created|timestamp }}"></span>
 						</span>
 					</div>
 					<div class="card-body">

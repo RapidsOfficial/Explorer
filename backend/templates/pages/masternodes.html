@@ -32,7 +32,7 @@
 										{{ masternode.status }}
 									</td>
 									<td>
-										{{ moment(masternode.lastpaid, True).format('YYYY-MM-DD HH:mm:ss') }}
+										<span class="local-time" time="{{ masternode.lastpaid|timestamp }}"></span>
 									</td>
 								</tr>
 							{% endfor %}

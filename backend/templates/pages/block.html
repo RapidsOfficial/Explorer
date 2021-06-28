@@ -13,7 +13,9 @@
 						</tr>
 						<tr>
 							<td>Timestamp</td>
-							<td>{{ moment(block.created, True).format('YYYY-MM-DD HH:mm:ss') }} (<b>{{ block.timestamp }}</b>)</td>
+							<td>
+								<span class="local-time" time="{{ block.created|timestamp }}"></span> (<b>{{ block.timestamp }}</b>)
+							</td>
 						</tr>
 						<tr>
 							<td>Block Hash</td>
