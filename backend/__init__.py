@@ -1,14 +1,10 @@
 from flask import Flask, render_template
-from flask_moment import Moment
 from flask_cors import CORS
 import config
-
-moment = Moment()
 
 def create_app():
     app = Flask(__name__)
     app.config["SECRET_KEY"] = config.secret
-    moment.init_app(app)
     CORS(app)
 
     with app.app_context():
