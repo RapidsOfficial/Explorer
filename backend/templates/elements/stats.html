@@ -1,0 +1,32 @@
+<div id="stats">
+	<div class="row mb-2">
+		<div class="col-lg-4 col-md-12 d-flex">
+			<div class="card margin-mobile" style="width: 100%;">
+				<div class="card-body" style="display: flex;justify-content: center;align-items: center;">
+					<div>
+						<div>Height: <b>{{ stats.height }}</b></div>
+						<div>Masternodes: <b>{{ stats.masternodes }}</b></div>
+						<div>Unique addresses: <b>{{ stats.addresses }}</b></div>
+						<div>Non-reward transactions: <b>{{ stats.transactions }}</b></div>
+						<div>Total supply: <b>{{ stats.supply|amount }} RPD</b></div>
+						<div>Collateral: <b>{{ stats.collateral|amount }} RPD</b></div>
+						<div>Locked coins: <b>{{ stats.locked|amount }} RPD</b></div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="col-lg-4 col-md-12 d-flex">
+			<div class="card margin-mobile" style="width: 100%;">
+				<div class="card-body" style="display: flex;justify-content: center;align-items: center;">
+					<script src="https://widgets.coingecko.com/coingecko-coin-ticker-widget.js"></script>
+					<coingecko-coin-ticker-widget style="width: 100%;" coin-id="rapids" currency="usd" locale="en"></coingecko-coin-ticker-widget>
+				</div>
+			</div>
+		</div>
+		<div class="col-lg-4 col-md-12">
+			<div class="card p-1">
+				<a class="twitter-timeline" href="https://twitter.com/RapidsRPD?ref_src=twsrc%5Etfw" data-height="300">Tweets by RapidsRPD</a> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script> 
+			</div>
+		</div>
+	</div>
+</div>

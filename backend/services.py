@@ -137,6 +137,10 @@ class AddressService(object):
             lastactive=created
         )
 
+    @classmethod
+    def count(cls):
+        return Address.select().count()
+
 class BalanceService(object):
     @classmethod
     def get_by_currency(cls, address, currency):

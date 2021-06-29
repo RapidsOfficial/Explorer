@@ -18,7 +18,7 @@ def create_app():
 
         @app.template_filter("amount")
         def amount_filter(amount):
-            result = ("%.8f" % amount).rstrip("0")
+            result = "{:,.8f}".format(amount).rstrip("0")
 
             if result[-1] == ".":
                 result = result[:-1]

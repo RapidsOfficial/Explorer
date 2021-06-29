@@ -1,6 +1,9 @@
 from flask import render_template, redirect, url_for
+from ..services import MasternodeService
 from ..services import IntervalService
+from ..services import AddressService
 from ..services import BlockService
+from ..services import StatsService
 from pony import orm
 from .. import utils
 import math
@@ -23,10 +26,25 @@ def init(blueprint):
         chart = IntervalService.list("transactions")
         title = "Overview"
 
+        non_reward_transactions = StatsService.get_by_key("non_reward_transactions")
+        supply = StatsService.get_by_key("supply")
+        masternodes = MasternodeService.total()
+        collateral = 10000
+
+        stats = {
+            "addresses": AddressService.count(),
+            "masternodes": masternodes,
+            "transactions": int(non_reward_transactions.value),
+            "collateral": collateral,
+            "supply": round(supply.value, 2),
+            "height": latest.height,
+            "locked": collateral * masternodes
+        }
+
         return render_template(
             "pages/overview.html", pagination=pagination,
             blocks=blocks, chart=chart,
-            title=title
+            title=title, stats=stats
         )
 
     @blueprint.route("/block/<string:blockhash>", defaults={"page": 1})
