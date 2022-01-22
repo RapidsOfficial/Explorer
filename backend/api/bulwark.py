@@ -157,6 +157,7 @@ def address_masternodes(raw_address):
     return "Not implemented"
 
 @blueprint.route("/masternodecount", methods=["GET"])
+@orm.db_session
 def masternodes_count():
     return {
         "enabled": MasternodeService.enabled(),
