@@ -122,6 +122,9 @@ def sync_blocks():
                 balance.balance -= prev_out.amount
                 balance.sent += prev_out.amount
 
+                if prev_out.vin:
+                    prev_out.vin.delete()
+
                 InputService.create(
                     vin["sequence"], vin["vout"], transaction, prev_out
                 )
