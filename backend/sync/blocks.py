@@ -149,6 +149,9 @@ def sync_blocks():
                 currency = CURRENCY
 
                 script = vout["address"]
+                if not script:
+                    continue
+
                 address = AddressService.get_by_address(script, True, created)
                 address.transactions.add(transaction)
                 address.lastactive = created
