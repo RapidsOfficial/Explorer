@@ -1,4 +1,5 @@
 from ..constants import DECIMALS, CURRENCY
+from .block import Block
 from .base import db
 from pony import orm
 
@@ -115,52 +116,53 @@ class Transaction(db.Entity):
         return total
 
     def display(self):
-        # latest_blocks = Block.select().order_by(
-        #     orm.desc(Block.height)
-        # ).first()
+        latest_blocks = Block.select().order_by(
+            orm.desc(Block.height)
+        ).first()
 
-        # output_amount = 0
-        # input_amount = 0
-        # outputs = []
-        # inputs = []
-        # fee = 0
+        output_amount = 0
+        input_amount = 0
+        outputs = []
+        inputs = []
+        fee = 0
 
-        # for vin in self.inputs:
-        #     inputs.append({
-        #         "address": vin.vout.address.address,
-        #         "currency": vin.vout.currency,
-        #         "amount": round(vin.vout.amount, DECIMALS)
-        #     })
+        for vin in self.inputs:
+            inputs.append({
+                "address": vin.vout.address.address,
+                "currency": vin.vout.currency,
+                "amount": round(vin.vout.amount, DECIMALS)
+            })
 
-        #     if vin.vout.currency == CURRENCY:
-        #         input_amount += vin.vout.amount
+            if vin.vout.currency == CURRENCY:
+                input_amount += vin.vout.amount
 
-        # for vout in self.outputs:
-        #     outputs.append({
-        #         "address": vout.address.address,
-        #         "currency": vout.currency,
-        #         "amount": round(vout.amount, DECIMALS),
-        #         "category": vout.category
-        #     })
+        for vout in self.outputs:
+            outputs.append({
+                "address": vout.address.address,
+                "currency": vout.currency,
+                "amount": round(vout.amount, DECIMALS),
+                "category": vout.category
+            })
 
-        #     if vout.currency == CURRENCY:
-        #         output_amount += vout.amount
+            if vout.currency == CURRENCY:
+                output_amount += vout.amount
 
-        # if not self.coinbase and not self.coinstake:
-        #     fee = input_amount - output_amount
+        if not self.coinbase and not self.coinstake:
+            fee = input_amount - output_amount
 
-        # return {
-        #     "amount": round(output_amount, DECIMALS),
-        #     "confirmations": latest_blocks.height - self.block.height + 1,
-        #     "fee": round(fee, DECIMALS),
-        #     "coinstake": self.coinstake,
-        #     "height": self.block.height,
-        #     "coinbase": self.coinbase,
-        #     "txid": self.txid,
-        #     "size": self.size,
-        #     "outputs": outputs,
-        #     "mempool": False,
-        #     "inputs": inputs
-        # }
+        return {
+            "amount": round(output_amount, DECIMALS),
+            "confirmations": latest_blocks.height - self.block.height + 1,
+            "fee": round(fee, DECIMALS),
+            "coinstake": self.coinstake,
+            "blockhash": self.block.blockhash,
+            "height": self.block.height,
+            "coinbase": self.coinbase,
+            "txid": self.txid,
+            "size": self.size,
+            "outputs": outputs,
+            "mempool": False,
+            "inputs": inputs
+        }
 
-        return {}
+        # return {}
