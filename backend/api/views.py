@@ -1,9 +1,9 @@
+from ..models import Transaction, Token, Balance
 from webargs.flaskparser import use_args
 from ..services import IntervalService
 from ..services import TransactionService
 from ..services import AddressService
 from ..services import BlockService
-from ..models import Transaction, Token
 from ..constants import CURRENCY
 from flask import Blueprint
 from .args import page_args
@@ -119,6 +119,8 @@ def balances(address):
     address = AddressService.get_by_address(address)
     result = {
         "balance": 0,
+        "received": 0,
+        "sent": 0,
         "tokens": []
     }
 
@@ -127,20 +129,13 @@ def balances(address):
             if balance.currency == CURRENCY:
                 result["balance"] = utils.round_amount(balance.balance)
 
-        tokens = utils.make_request("getalltokenbalancesforaddress", [address.address])
-
-        if not tokens["error"]:
-            tokens_list = []
-
-            for token in tokens["result"]:
-                tokens_list.append({
-                    "balance": float(token["balance"]),
-                    "frozen": float(token["frozen"]),
-                    "reserved": float(token["reserved"]),
-                    "name": token["name"]
+            else:
+                result["tokens"].append({
+                    "token": balance.currency,
+                    "balance": balance.balance,
+                    "received": balance.received,
+                    "sent": balance.sent
                 })
-
-            result["tokens"] = tokens_list
 
     return utils.response(result)
 
@@ -190,5 +185,27 @@ def nft_list(args):
 
     for token in tokens:
         result.append(token.display)
+
+    return utils.response(result)
+
+@blueprint.route("/holders", defaults={"name": CURRENCY}, methods=["GET"])
+@blueprint.route("/holders/<string:name>", methods=["GET"])
+@use_args(page_args, location="query")
+@orm.db_session
+def holders(args, name):
+    holders = Balance.select(
+        lambda b: b.currency == name
+    ).order_by(
+        orm.desc(Balance.balance)
+    ).page(args["page"], pagesize=100)
+    result = []
+
+    for holder in holders:
+        result.append({
+            "balance": holder.balance,
+            "received": holder.received,
+            "sent": holder.sent,
+            "address": holder.address.address
+        })
 
     return utils.response(result)
