@@ -16,7 +16,9 @@ class Transaction(db.Entity):
     block = orm.Required("Block")
     outputs = orm.Set("Output")
     inputs = orm.Set("Input")
+    issued = orm.Set("Token")
 
+    transfers = orm.Set("Transfer")
     addresses = orm.Set("Address")
 
     @property

@@ -1,3 +1,4 @@
 from backend import sync
 
-sync.rollback_blocks(1630219)
+sync.sync_blocks()
+# sync.rollback_blocks(1630219)

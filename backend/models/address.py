@@ -18,6 +18,10 @@ class Address(db.Entity):
 
     balances = orm.Set("Balance")
     outputs = orm.Set("Output")
+    issued = orm.Set("Token")
+
+    received = orm.Set("Transfer")
+    sent = orm.Set("Transfer")
 
     @property
     def txcount(self):

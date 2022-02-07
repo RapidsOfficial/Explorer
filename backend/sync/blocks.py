@@ -1,10 +1,11 @@
-from ..constants import REDUCTION_HEIGHT, BURN_ADDRESS
+from ..constants import REDUCTION_HEIGHT, BURN_ADDRESS, TOKEN_GENESIS
 from ..constants import CURRENCY, DECIMALS
 from ..services import TransactionService
 from .utils import log_block, log_message
 from ..methods.general import General
 from ..services import BalanceService
 from ..services import AddressService
+from ..models import Token, Transfer
 from ..services import OutputService
 from ..services import InputService
 from ..services import BlockService
@@ -140,6 +141,143 @@ def sync_blocks():
             for index, vout in enumerate(tx["outputs"]):
                 if not vout["type"]:
                     continue
+
+                if vout["type"] == "op_return":
+                    if block.height < TOKEN_GENESIS:
+                        continue
+
+                    transfer_data = utils.make_request("gettokentransaction", [transaction.txid])
+
+                    # Create token
+                    if not transfer_data["error"] and transfer_data["result"]["valid"]:
+                        result = transfer_data["result"]
+
+                        if result["type_int"] in [50, 54, 51]:
+                            if result["ecosystem"] != "main":
+                                continue
+
+                            issuer = AddressService.get_by_address(
+                                result["sendingaddress"], True, created
+                            )
+
+                            amount = float(result["amount"])
+                            managed = False if result["type_int"] == 50 else True
+                            crowdsale = result["type_int"] == 51
+
+                            Token(**{
+                                "supply": amount,
+                                "divisible": result["divisible"],
+                                "subcategory": result["subcategory"],
+                                "category": result["category"],
+                                "name": result["propertyname"],
+                                "data": result["data"],
+                                "url": result["url"],
+                                "transaction": transaction,
+                                "crowdsale": crowdsale,
+                                "managed": managed,
+                                "issuer": issuer
+                            })
+
+                        # Grant tokens
+                        elif result["type_int"] == 55:
+                            if not (token := Token.get(name=result["propertyname"])):
+                                continue
+
+                            sender = AddressService.get_by_address(
+                                result["sendingaddress"], True, created
+                            )
+
+                            receiver = AddressService.get_by_address(
+                                result["referenceaddress"], True, created
+                            )
+
+                            amount = float(result["amount"])
+
+                            Transfer(**{
+                                "amount": amount,
+                                "transaction": transaction,
+                                "receiver": receiver,
+                                "sender": sender,
+                                "token": token,
+                                "create": True
+                            })
+
+                            token.supply += amount
+
+                        # Revoke tokens
+                        elif result["type_int"] == 56:
+                            if not (token := Token.get(name=result["propertyname"])):
+                                continue
+
+                            sender = AddressService.get_by_address(
+                                result["sendingaddress"], True, created
+                            )
+
+                            amount = float(result["amount"])
+
+                            Transfer(**{
+                                "amount": amount,
+                                "transaction": transaction,
+                                "sender": sender,
+                                "token": token,
+                                "burn": True
+                            })
+
+                            token.supply -= amount
+
+                        # Change issuer
+                        elif result["type_int"] == 70:
+                            if not (token := Token.get(name=result["propertyname"])):
+                                continue
+
+                            receiver = AddressService.get_by_address(
+                                result["referenceaddress"], True, created
+                            )
+
+                            token.issuer = receiver
+
+                        # Simple send
+                        elif result["type_int"] == 0:
+                            if not (token := Token.get(name=result["propertyname"])):
+                                continue
+
+                            sender = AddressService.get_by_address(
+                                result["sendingaddress"], True, created
+                            )
+
+                            receiver = AddressService.get_by_address(
+                                result["referenceaddress"], True, created
+                            )
+
+                            amount = float(result["amount"])
+                            crowdsale = result["type"] == "Crowdsale Purchase"
+
+                            Transfer(**{
+                                "amount": amount,
+                                "transaction": transaction,
+                                "receiver": receiver,
+                                "sender": sender,
+                                "token": token
+                            })
+
+                            if crowdsale:
+                                if not (crowdsale := Token.get(name=result["purchasedpropertyname"])):
+                                    continue
+
+                                amount = float(result["purchasedtokens"])
+
+                                Transfer(**{
+                                    "amount": amount,
+                                    "transaction": transaction,
+                                    "receiver": sender,
+                                    "sender": receiver,
+                                    "token": crowdsale,
+                                    "crowdsale": True
+                                })
+
+                        # Unsupported token transaciton type
+                        else:
+                            continue
 
                 amount = utils.amount(vout["value"])
                 if height <= REDUCTION_HEIGHT:

@@ -6,6 +6,7 @@ from .interval import Interval
 from .address import Address
 from .block import Block
 from .stats import Stats
+from .token import Token, Transfer
 from .base import db
 import config
 
