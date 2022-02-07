@@ -20,6 +20,7 @@ class Transaction(db.Entity):
 
     transfers = orm.Set("Transfer")
     addresses = orm.Set("Address")
+    trades = orm.Set("Trade")
 
     @property
     def vin(self):
@@ -177,5 +178,3 @@ class Transaction(db.Entity):
             "issued": issued,
             "transfers": transfers
         }
-
-        # return {}

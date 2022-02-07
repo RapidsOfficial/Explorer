@@ -5,7 +5,7 @@ from .utils import log_block, log_message
 from ..methods.general import General
 from ..services import BalanceService
 from ..services import AddressService
-from ..models import Token, Transfer
+from ..models import Token, Transfer, Trade
 from ..services import OutputService
 from ..services import InputService
 from ..services import BlockService
@@ -15,6 +15,7 @@ from datetime import datetime
 from pony import orm
 from .. import utils
 from . import parser
+import json
 
 @orm.db_session
 def rollback_blocks(height):
@@ -152,6 +153,7 @@ def sync_blocks():
                     if not transfer_data["error"] and transfer_data["result"]["valid"]:
                         result = transfer_data["result"]
 
+                        # Create token
                         if result["type_int"] in [50, 54, 51]:
                             if result["ecosystem"] != "main":
                                 continue
@@ -164,7 +166,7 @@ def sync_blocks():
                             managed = False if result["type_int"] == 50 else True
                             crowdsale = result["type_int"] == 51
 
-                            Token(**{
+                            token = Token(**{
                                 "supply": amount,
                                 "divisible": result["divisible"],
                                 "subcategory": result["subcategory"],
@@ -177,6 +179,19 @@ def sync_blocks():
                                 "managed": managed,
                                 "issuer": issuer
                             })
+
+                            if amount > 0:
+                                Transfer(**{
+                                    "amount": amount,
+                                    "transaction": transaction,
+                                    "receiver": issuer,
+                                    "token": token,
+                                    "create": True
+                                })
+
+                                balance_issuer = BalanceService.get_by_currency(issuer, token.name)
+                                balance_issuer.balance += amount
+                                balance_issuer.received += amount
 
                         # Grant tokens
                         elif result["type_int"] == 55:
@@ -202,6 +217,10 @@ def sync_blocks():
                                 "create": True
                             })
 
+                            balance_receiver = BalanceService.get_by_currency(receiver, token.name)
+                            balance_receiver.balance += amount
+                            balance_receiver.received += amount
+
                             token.supply += amount
 
                         # Revoke tokens
@@ -222,6 +241,10 @@ def sync_blocks():
                                 "token": token,
                                 "burn": True
                             })
+
+                            balance_sender = BalanceService.get_by_currency(sender, token.name)
+                            balance_sender.balance -= amount
+                            balance_sender.sent += amount
 
                             token.supply -= amount
 
@@ -260,6 +283,14 @@ def sync_blocks():
                                 "token": token
                             })
 
+                            balance_receiver = BalanceService.get_by_currency(receiver, token.name)
+                            balance_receiver.balance += amount
+                            balance_receiver.received += amount
+
+                            balance_sender = BalanceService.get_by_currency(sender, token.name)
+                            balance_sender.balance -= amount
+                            balance_sender.sent += amount
+
                             if crowdsale:
                                 if not (crowdsale := Token.get(name=result["purchasedpropertyname"])):
                                     continue
@@ -274,6 +305,85 @@ def sync_blocks():
                                     "token": crowdsale,
                                     "crowdsale": True
                                 })
+
+                                balance_sender_crowdsale = BalanceService.get_by_currency(sender, crowdsale.name)
+                                balance_sender_crowdsale.balance += amount
+                                balance_sender_crowdsale.received += amount
+
+                        # Trade
+                        elif result["type_int"] == 25:
+                            token_trade = utils.make_request("gettokentrade", [transaction.txid])
+
+                            if not token_trade["error"] and token_trade["result"]["valid"]:
+                                trade_result = token_trade["result"]
+
+                                if len(trade_result["matches"]) == 0:
+                                    continue
+
+                                if not (token_desired := Token.get(name=trade_result["propertynamedesired"])):
+                                    continue
+
+                                if not (token_sale := Token.get(name=trade_result["propertynameforsale"])):
+                                    continue
+
+                                sender = AddressService.get_by_address(
+                                    result["sendingaddress"], True, created
+                                )
+
+                                balance_sender_desired = BalanceService.get_by_currency(sender, token_desired.name)
+                                balance_sender_sale = BalanceService.get_by_currency(sender, token_sale.name)
+
+                                for match in trade_result["matches"]:
+                                    if match["block"] <= trade_result["block"]:
+                                        receiver = AddressService.get_by_address(
+                                            match["address"], True, created
+                                        )
+
+                                        balance_receiver_desired = BalanceService.get_by_currency(receiver, token_desired.name)
+                                        balance_receiver_sale = BalanceService.get_by_currency(receiver, token_sale.name)
+
+                                        amount_received = float(match["amountreceived"])
+                                        amount_sold = float(match["amountsold"])
+
+                                        Trade(**{
+                                            "receiver": receiver,
+                                            "sender": sender,
+                                            "transaction": transaction,
+                                            "token_desired": token_desired,
+                                            "token_sale": token_sale,
+                                            "amount_received": amount_received,
+                                            "amount_sold": amount_sold
+                                        })
+
+                                        Transfer(**{
+                                            "amount": amount_sold,
+                                            "transaction": transaction,
+                                            "receiver": receiver,
+                                            "sender": sender,
+                                            "token": token_sale,
+                                            "trade": True
+                                        })
+
+                                        balance_receiver_sale.balance += amount_sold
+                                        balance_receiver_sale.received += amount_sold
+
+                                        balance_sender_sale.balance -= amount_sold
+                                        balance_sender_sale.sent += amount_sold
+
+                                        Transfer(**{
+                                            "amount": amount_received,
+                                            "transaction": transaction,
+                                            "receiver": sender,
+                                            "sender": receiver,
+                                            "token": token_desired,
+                                            "trade": True
+                                        })
+
+                                        balance_sender_desired.balance += amount_received
+                                        balance_sender_desired.received += amount_received
+
+                                        balance_receiver_desired.balance -= amount_received
+                                        balance_receiver_desired.sent += amount_received
 
                         # Unsupported token transaciton type
                         else:

@@ -1,3 +1,4 @@
+from .balance import Balance
 from .base import db
 from pony import orm
 
@@ -17,6 +18,9 @@ class Token(db.Entity):
     transaction = orm.Required("Transaction")
     issuer = orm.Required("Address")
     transfers = orm.Set("Transfer")
+
+    trades_desierd = orm.Set("Trade", reverse="token_desired")
+    trades_sold = orm.Set("Trade", reverse="token_sale")
 
     @property
     def nft(self):
@@ -45,12 +49,38 @@ class Transfer(db.Entity):
     transaction = orm.Required("Transaction")
     crowdsale = orm.Required(bool, default=False)
     create = orm.Required(bool, default=False)
+    trade = orm.Required(bool, default=False)
     burn = orm.Required(bool, default=False)
     amount = orm.Required(float, default=0)
 
     receiver = orm.Optional("Address", reverse="received")
     sender = orm.Optional("Address", reverse="sent")
     token = orm.Required("Token")
+
+    def before_delete(self):
+        # Grant tokens
+        if self.create:
+            self.token.supply -= self.amount
+
+        # Revoke tokens
+        if self.burn:
+            self.token.supply += self.amount
+
+        if self.receiver:
+            balance_receiver = Balance.get(
+                address=self.receiver, currency=self.token.name
+            )
+
+            balance_receiver.balance -= self.amount
+            balance_receiver.received -= self.amount
+
+        if self.sender and not self.crowdsale:
+            balance_sender = Balance.get(
+                address=self.sender, currency=self.token.name
+            )
+
+            balance_sender.balance += self.amount
+            balance_sender.sent -= self.amount
 
     @property
     def display(self):
@@ -67,3 +97,16 @@ class Transfer(db.Entity):
             "reciever": reciever,
             "sender": sender
         }
+
+class Trade(db.Entity):
+    _table_ = "chain_trades"
+
+    receiver = orm.Optional("Address", reverse="trades_received")
+    sender = orm.Optional("Address", reverse="trades_sent")
+    transaction = orm.Required("Transaction")
+
+    token_desired = orm.Required("Token", reverse="trades_desierd")
+    token_sale = orm.Required("Token", reverse="trades_sold")
+
+    amount_received = orm.Required(float, default=0)
+    amount_sold = orm.Required(float, default=0)

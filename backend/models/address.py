@@ -16,6 +16,9 @@ class Address(db.Entity):
         reverse="addresses"
     )
 
+    trades_received = orm.Set("Trade", reverse="receiver")
+    trades_sent = orm.Set("Trade", reverse="sender")
+
     balances = orm.Set("Balance")
     outputs = orm.Set("Output")
     issued = orm.Set("Token")
