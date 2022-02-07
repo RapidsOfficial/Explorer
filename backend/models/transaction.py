@@ -117,6 +117,7 @@ class Transaction(db.Entity):
 
         return total
 
+    @property
     def display(self):
         latest_blocks = Block.select().order_by(
             orm.desc(Block.height)
@@ -124,6 +125,8 @@ class Transaction(db.Entity):
 
         output_amount = 0
         input_amount = 0
+        transfers = []
+        issued = []
         outputs = []
         inputs = []
         fee = 0
@@ -149,6 +152,12 @@ class Transaction(db.Entity):
             if vout.currency == CURRENCY:
                 output_amount += vout.amount
 
+        for token in self.issued:
+            issued.append(token.display)
+
+        for transfer in self.transfers:
+            transfers.append(transfer.display)
+
         if not self.coinbase and not self.coinstake:
             fee = input_amount - output_amount
 
@@ -164,7 +173,9 @@ class Transaction(db.Entity):
             "size": self.size,
             "outputs": outputs,
             "mempool": False,
-            "inputs": inputs
+            "inputs": inputs,
+            "issued": issued,
+            "transfers": transfers
         }
 
         # return {}

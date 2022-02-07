@@ -2,6 +2,7 @@ from ..constants import DECIMALS
 from datetime import datetime
 from .base import db
 from pony import orm
+from .. import utils
 
 class Block(db.Entity):
     _table_ = "chain_blocks"
@@ -23,6 +24,22 @@ class Block(db.Entity):
     previous_block = orm.Optional("Block")
     transactions = orm.Set("Transaction")
     next_block = orm.Optional("Block")
+
+    @property
+    def display(self):
+        return {
+            "reward": utils.round_amount(self.reward),
+            "blockhash": self.blockhash,
+            "height": self.height,
+            "tx": len(self.transactions),
+            "timestamp": self.created.timestamp(),
+            "merkleroot": self.merkleroot,
+            "version": self.version,
+            "stake": self.stake,
+            "nonce": self.nonce,
+            "size": self.size,
+            "bits": self.bits
+        }
 
     @property
     def txs(self):

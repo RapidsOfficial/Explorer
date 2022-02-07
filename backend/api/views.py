@@ -3,7 +3,7 @@ from ..services import IntervalService
 from ..services import TransactionService
 from ..services import AddressService
 from ..services import BlockService
-from ..models import Transaction
+from ..models import Transaction, Token
 from ..constants import CURRENCY
 from flask import Blueprint
 from .args import page_args
@@ -12,20 +12,12 @@ from pony import orm
 
 blueprint = Blueprint("api", __name__, url_prefix="/v2/")
 
-def round_amount(amount):
-    return round(amount, 8)
-
 @blueprint.route("/latest", methods=["GET"])
 @orm.db_session
 def latest():
     block = BlockService.latest_block()
 
-    return utils.response({
-        "time": block.created.timestamp(),
-        "blockhash": block.blockhash,
-        "height": block.height,
-        "reward": round_amount(block.reward)
-    })
+    return utils.response(block.display)
 
 @blueprint.route("/transactions", methods=["GET"])
 @use_args(page_args, location="query")
@@ -35,16 +27,7 @@ def transactions(args):
     result = []
 
     for transaction in transactions:
-        result.append({
-            "height": transaction.block.height,
-            "blockhash": transaction.block.blockhash,
-            "timestamp": transaction.block.created.timestamp(),
-            "txhash": transaction.txid,
-            "fee": round_amount(transaction.fee),
-            "coinstake": transaction.coinstake,
-            "coinbase": transaction.coinbase,
-            "amount": round_amount(transaction.amount)
-        })
+        result.append(transaction.display)
 
     return utils.response(result)
 
@@ -56,12 +39,7 @@ def blocks(args):
     result = []
 
     for block in blocks:
-        result.append({
-            "height": block.height,
-            "blockhash": block.blockhash,
-            "timestamp": block.created.timestamp(),
-            "tx": len(block.transactions)
-        })
+        result.append(block.display)
 
     return utils.response(result)
 
@@ -71,19 +49,7 @@ def block_data(bhash):
     block = BlockService.get_by_hash(bhash)
 
     if block:
-        return utils.response({
-            "reward": round_amount(block.reward),
-            "blockhash": block.blockhash,
-            "height": block.height,
-            "tx": len(block.transactions),
-            "timestamp": block.created.timestamp(),
-            "merkleroot": block.merkleroot,
-            "version": block.version,
-            "stake": block.stake,
-            "nonce": block.nonce,
-            "size": block.size,
-            "bits": block.bits
-        })
+        return utils.response(block.display)
 
     return utils.dead_response("Block not found"), 404
 
@@ -94,20 +60,11 @@ def block_transactions_list(args, bhash):
     block = BlockService.get_by_hash(bhash)
 
     if block:
-        transactions = block.transactions.page(args["page"])
+        transactions = block.transactions.page(args["page"], pagesize=100)
         result = []
 
         for transaction in transactions:
-            transaction_result = transaction.display()
-            transfer = utils.make_request("gettokentransaction", [transaction.txid])
-
-            if not transfer["error"]:
-                if transfer["result"]["valid"]:
-                    transfer["result"].pop("ismine")
-
-                    transaction_result["transfer"] = transfer["result"]
-
-            result.append(transaction_result)
+            result.append(transaction.display)
 
         return utils.response(result)
 
@@ -119,16 +76,7 @@ def transaction(txid):
     transaction = TransactionService.get_by_txid(txid)
 
     if transaction:
-        transaction_result = transaction.display()
-        transfer = utils.make_request("gettokentransaction", [transaction.txid])
-
-        if not transfer["error"]:
-            if transfer["result"]["valid"]:
-                transfer["result"].pop("ismine")
-
-                transaction_result["transfer"] = transfer["result"]
-
-        return utils.response(transaction_result)
+        return utils.response(transaction.display)
 
     return utils.dead_response("Transaction not found"), 404
 
@@ -145,16 +93,7 @@ def history(args, address):
         ).page(args["page"], pagesize=100)
 
         for transaction in transactions:
-            transaction_result = transaction.display()
-            transfer = utils.make_request("gettokentransaction", [transaction.txid])
-
-            if not transfer["error"]:
-                if transfer["result"]["valid"]:
-                    transfer["result"].pop("ismine")
-
-                    transaction_result["transfer"] = transfer["result"]
-
-            result.append(transaction_result)
+            result.append(transaction.display)
 
     return utils.response(result)
 
@@ -186,51 +125,70 @@ def balances(address):
     if address:
         for balance in address.balances:
             if balance.currency == CURRENCY:
-                result["balance"] = round_amount(balance.balance)
+                result["balance"] = utils.round_amount(balance.balance)
 
         tokens = utils.make_request("getalltokenbalancesforaddress", [address.address])
 
         if not tokens["error"]:
-            result["tokens"] = tokens["result"]
+            tokens_list = []
+
+            for token in tokens["result"]:
+                tokens_list.append({
+                    "balance": float(token["balance"]),
+                    "frozen": float(token["frozen"]),
+                    "reserved": float(token["reserved"]),
+                    "name": token["name"]
+                })
+
+            result["tokens"] = tokens_list
 
     return utils.response(result)
 
 @blueprint.route("/token/<string:name>", methods=["GET"])
 @orm.db_session
 def token_info(name):
-    result = utils.make_request("gettoken", [name])
-    return result
+    if not (token := Token.get(name=name)):
+        return utils.dead_response("Token not found"), 404
 
-# @blueprint.route("/token/<string:name>/transactions", methods=["GET"])
-# @orm.db_session
-# def token_transactions(name):
-#     result = utils.make_request("gettoken", [name])
-#     return result
+    return utils.response(token.display)
+
+@blueprint.route("/token/<string:name>/transfers", methods=["GET"])
+@use_args(page_args, location="query")
+@orm.db_session
+def token_transactions(args, name):
+    if not (token := Token.get(name=name)):
+        return utils.dead_response("Token not found"), 404
+
+    transfers = token.transfers.page(args["page"], pagesize=100)
+    result = []
+
+    for transfer in transfers:
+        result.append(transfer.display)
+
+    return utils.response(result)
 
 @blueprint.route("/tokens", methods=["GET"])
+@use_args(page_args, location="query")
 @orm.db_session
-def token_list():
-    result = utils.make_request("listtokens")
-    return result
+def token_list(args):
+    tokens = Token.select().page(args["page"], pagesize=100)
+    result = []
 
-@blueprint.route("/block/<string:bhash>", methods=["GET"])
+    for token in tokens:
+        result.append(token.display)
+
+    return utils.response(result)
+
+@blueprint.route("/nft", methods=["GET"])
+@use_args(page_args, location="query")
 @orm.db_session
-def block(bhash):
-    block = BlockService.get_by_hash(bhash)
+def nft_list(args):
+    tokens = Token.select(
+        lambda t: t.nft is True
+    ).page(args["page"], pagesize=100)
+    result = []
 
-    if block:
-        return utils.response({
-            "blockhash": block.blockhash,
-            "height": block.height,
-            "tx": len(block.transactions),
-            "timestamp": block.created.timestamp(),
-            "merkleroot": block.merkleroot,
-            "version": block.version,
-            "stake": block.stake,
-            "nonce": block.nonce,
-            "size": block.size,
-            "bits": block.bits,
-            "rewards": block.rewards
-        })
+    for token in tokens:
+        result.append(token.display)
 
-    return utils.dead_response("Block not found"), 404
+    return utils.response(result)

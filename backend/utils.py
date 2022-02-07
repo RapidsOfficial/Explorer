@@ -3,6 +3,9 @@ import config
 import math
 import json
 
+def round_amount(amount):
+    return round(amount, 8)
+
 def location(address):
     try:
         r = requests.get(f"http://ip-api.com/json/{address}")
