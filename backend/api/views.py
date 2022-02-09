@@ -6,7 +6,7 @@ from ..services import AddressService
 from ..services import BlockService
 from ..constants import CURRENCY
 from flask import Blueprint
-from .args import page_args
+from .args import page_args, filter_args
 from .. import utils
 from pony import orm
 
@@ -163,10 +163,27 @@ def token_transactions(args, name):
     return utils.response(result)
 
 @blueprint.route("/tokens", methods=["GET"])
-@use_args(page_args, location="query")
+@use_args(filter_args, location="query")
 @orm.db_session
 def token_list(args):
-    tokens = Token.select().page(args["page"], pagesize=100)
+    tokens = Token.select(lambda t: t.nft == args["nft"])
+
+    if args["search"]:
+        tokens = tokens.filter(lambda t: args["search"] in t.name)
+
+    if args["category"]:
+        tokens = tokens.filter(lambda t: t.category == args["category"])
+
+    if args["subcategory"]:
+        tokens = tokens.filter(lambda t: t.subcategory == args["subcategory"])
+
+    if args["issuer"]:
+        if not (issuer := AddressService.get_by_address(args["issuer"])):
+            return utils.response([])
+
+        tokens = tokens.filter(lambda t: t.issuer == issuer)
+
+    tokens = tokens.page(args["page"], pagesize=100)
     result = []
 
     for token in tokens:
