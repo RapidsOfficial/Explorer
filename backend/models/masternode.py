@@ -17,3 +17,20 @@ class Masternode(db.Entity):
     outidx = orm.Required(int)
     status = orm.Required(str)
     pubkey = orm.Required(str)
+
+    @property
+    def display(self):
+        return {
+            "lastseen": self.lastseen.timestamp(),
+            "lastpaid": self.lastpaid.timestamp(),
+            "created": self.created.timestamp(),
+            "activetime": self.activetime,
+            "version": self.version,
+            "address": self.address,
+            "txhash": self.txhash,
+            "outidx": self.outidx,
+            "status": self.status,
+            "pubkey": self.pubkey,
+            "active": self.active,
+            "rank": self.rank
+        }

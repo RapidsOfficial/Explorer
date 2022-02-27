@@ -21,9 +21,9 @@ def latest():
 
     return utils.response(block.display)
 
-@blueprint.route("/masternodes", methods=["GET"])
+@blueprint.route("/masternodes/stats", methods=["GET"])
 @orm.db_session
-def masternodes():
+def masternodes_stats():
     masternodes = MasternodeService.total()
     collateral = 10000
 
@@ -32,6 +32,20 @@ def masternodes():
         "collateral": collateral,
         "count": masternodes
     })
+
+@blueprint.route("/masternodes", methods=["GET"])
+@use_args(page_args, location="query")
+@orm.db_session
+def masternodes(args):
+    masternodes = MasternodeService.list()
+    masternodes = masternodes.order_by(lambda m: m.rank)
+    masternodes = masternodes.page(args["page"], pagesize=100)
+    result = []
+
+    for masternode in masternodes:
+        result.append(masternode.display)
+
+    return utils.response(result)
 
 @blueprint.route("/search", methods=["GET"])
 @use_args(search_args, location="query")
