@@ -20,3 +20,7 @@ filter_args = {
     "issuer": fields.Str(missing=None),
     "nft": fields.Bool(missing=False)
 }
+
+search_args = {
+    "query": fields.Str(missing=None)
+}

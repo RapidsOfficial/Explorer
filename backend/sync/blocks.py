@@ -15,7 +15,6 @@ from datetime import datetime
 from pony import orm
 from .. import utils
 from . import parser
-import json
 
 @orm.db_session
 def rollback_blocks(height):
@@ -385,7 +384,7 @@ def sync_blocks():
                                         balance_receiver_desired.balance -= amount_received
                                         balance_receiver_desired.sent += amount_received
 
-                        # Unsupported token transaciton type
+                        # Unsupported token transaction type
                         else:
                             continue
 

@@ -1,12 +1,14 @@
-from ..models import Transaction, Token, Balance
-from webargs.flaskparser import use_args
-from ..services import IntervalService
+from .args import page_args, filter_args, search_args
+from ..models import Token, Address, Block
+from ..models import Transaction, Balance
 from ..services import TransactionService
+from webargs.flaskparser import use_args
+from ..services import MasternodeService
+from ..services import IntervalService
 from ..services import AddressService
 from ..services import BlockService
 from ..constants import CURRENCY
 from flask import Blueprint
-from .args import page_args, filter_args
 from .. import utils
 from pony import orm
 
@@ -18,6 +20,67 @@ def latest():
     block = BlockService.latest_block()
 
     return utils.response(block.display)
+
+@blueprint.route("/masternodes", methods=["GET"])
+@orm.db_session
+def masternodes():
+    masternodes = MasternodeService.total()
+    collateral = 10000
+
+    return utils.response({
+        "locked": collateral * masternodes,
+        "collateral": collateral,
+        "count": masternodes
+    })
+
+@blueprint.route("/search", methods=["GET"])
+@use_args(search_args, location="query")
+@orm.db_session
+def search(args):
+    result = []
+
+    if args["query"] and len(args["query"]) >= 3:
+        transactions = Transaction.select(
+            lambda t: t.txid.startswith(args["query"])
+        ).limit(3)
+
+        for transaction in transactions:
+            result.append({
+                "result": transaction.txid,
+                "type": "transaction"
+            })
+
+        blocks = Block.select(
+            lambda b: b.blockhash.startswith(args["query"])
+        ).limit(3)
+
+        for block in blocks:
+            result.append({
+                "result": block.blockhash,
+                "type": "block"
+            })
+
+        addresses = Address.select(
+            lambda a: a.address.startswith(args["query"])
+        ).limit(3)
+
+        for address in addresses:
+            result.append({
+                "result": address.address,
+                "type": "address"
+            })
+
+        tokens = Token.select(
+            lambda t: t.name.startswith(args["query"])
+        ).limit(3)
+
+        for token in tokens:
+            result.append({
+                "result": token.name,
+                "type": "token"
+            })
+
+    return utils.response(result)
 
 @blueprint.route("/transactions", methods=["GET"])
 @use_args(page_args, location="query")

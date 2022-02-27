@@ -28,8 +28,12 @@ class Token(db.Entity):
 
     @property
     def display(self):
+        holders = Balance.select(
+            lambda b: b.currency == self.name
+        ).count(distinct=False)
+
         return {
-            "transaciton": self.transaction.txid,
+            "transaction": self.transaction.txid,
             "subcategory": self.subcategory,
             "issuer": self.issuer.address,
             "divisible": self.divisible,
@@ -37,6 +41,7 @@ class Token(db.Entity):
             "category": self.category,
             "managed": self.managed,
             "supply": self.supply,
+            "holders": holders,
             "name": self.name,
             "data": self.data,
             "url": self.url,
@@ -88,7 +93,7 @@ class Transfer(db.Entity):
         sender = self.sender.address if self.sender else None
 
         return {
-            "transaciton": self.transaction.txid,
+            "transaction": self.transaction.txid,
             "crowdsale": self.crowdsale,
             "token": self.token.name,
             "create": self.create,
