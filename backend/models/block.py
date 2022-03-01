@@ -32,7 +32,7 @@ class Block(db.Entity):
             "blockhash": self.blockhash,
             "height": self.height,
             "tx": len(self.transactions),
-            "timestamp": self.created.timestamp(),
+            "timestamp": int(self.created.timestamp()),
             "merkleroot": self.merkleroot,
             "version": self.version,
             "stake": self.stake,

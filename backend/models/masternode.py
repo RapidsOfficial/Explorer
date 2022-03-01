@@ -21,9 +21,9 @@ class Masternode(db.Entity):
     @property
     def display(self):
         return {
-            "lastseen": self.lastseen.timestamp(),
-            "lastpaid": self.lastpaid.timestamp(),
-            "created": self.created.timestamp(),
+            "lastseen": int(self.lastseen.timestamp()),
+            "lastpaid": int(self.lastpaid.timestamp()),
+            "created": int(self.created.timestamp()),
             "activetime": self.activetime,
             "version": self.version,
             "address": self.address,

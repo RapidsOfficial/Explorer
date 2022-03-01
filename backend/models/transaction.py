@@ -168,6 +168,7 @@ class Transaction(db.Entity):
             "fee": round(fee, DECIMALS),
             "coinstake": self.coinstake,
             "blockhash": self.block.blockhash,
+            "timestamp": int(self.block.created.timestamp()),
             "height": self.block.height,
             "coinbase": self.coinbase,
             "txid": self.txid,
