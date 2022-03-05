@@ -1,4 +1,5 @@
-from .args import page_args, filter_args, search_args
+from .args import masternodes_args, filter_args
+from .args import page_args, search_args
 from ..models import Token, Address, Block
 from ..models import Transaction, Balance
 from ..services import TransactionService
@@ -34,11 +35,15 @@ def masternodes_stats():
     })
 
 @blueprint.route("/masternodes", methods=["GET"])
-@use_args(page_args, location="query")
+@use_args(masternodes_args, location="query")
 @orm.db_session
 def masternodes(args):
     masternodes = MasternodeService.list()
     masternodes = masternodes.order_by(lambda m: m.rank)
+
+    if args["filter"]:
+        masternodes = masternodes.filter(lambda m: m.status == args["filter"])
+
     masternodes = masternodes.page(args["page"], pagesize=100)
     result = []
 

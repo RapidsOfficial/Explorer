@@ -4,6 +4,11 @@ page_args = {
     "page": fields.Int(missing=1, validate=validate.Range(min=1))
 }
 
+masternodes_args = {
+    "page": fields.Int(missing=1, validate=validate.Range(min=1)),
+    "filter": fields.Str(missing=None)
+}
+
 broadcast_args = {
     "raw": fields.Str(required=True)
 }
