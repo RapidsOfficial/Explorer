@@ -93,6 +93,7 @@ class Transfer(db.Entity):
         sender = self.sender.address if self.sender else None
 
         return {
+            "timestamp": int(self.transaction.block.created.timestamp()),
             "transaction": self.transaction.txid,
             "crowdsale": self.crowdsale,
             "token": self.token.name,
