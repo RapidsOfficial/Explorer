@@ -89,7 +89,7 @@ class Transfer(db.Entity):
 
     @property
     def display(self):
-        reciever = self.receiver.address if self.receiver else None
+        receiver = self.receiver.address if self.receiver else None
         sender = self.sender.address if self.sender else None
 
         return {
@@ -100,7 +100,7 @@ class Transfer(db.Entity):
             "create": self.create,
             "amount": self.amount,
             "burn": self.burn,
-            "reciever": reciever,
+            "receiver": receiver,
             "sender": sender
         }
 
