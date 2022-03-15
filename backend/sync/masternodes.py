@@ -38,7 +38,13 @@ def sync_masternodes():
 
             if (knows_masternode := MasternodeService.get_by_address(address)):
                 knows_masternode.activetime = activetime
+                knows_masternode.lastseen = lastseen
+                knows_masternode.lastpaid = lastpaid
+                knows_masternode.version = version
+                knows_masternode.txhash = txhash
+                knows_masternode.outidx = outidx
                 knows_masternode.status = status
+                knows_masternode.pubkey = pubkey
                 knows_masternode.active = True
                 knows_masternode.rank = rank
 

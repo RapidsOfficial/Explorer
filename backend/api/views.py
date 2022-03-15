@@ -7,6 +7,7 @@ from webargs.flaskparser import use_args
 from ..services import MasternodeService
 from ..services import IntervalService
 from ..services import AddressService
+from ..services import StatsService
 from ..services import BlockService
 from ..constants import CURRENCY
 from flask import Blueprint
@@ -109,7 +110,7 @@ def transactions(args):
     result = []
 
     for transaction in transactions:
-        result.append(transaction.display)
+        result.append(transaction.simple_display)
 
     return utils.response(result)
 
@@ -203,20 +204,27 @@ def balances(address):
         "balance": 0,
         "received": 0,
         "sent": 0,
+        "lastactive": 0,
+        "created": 0,
         "tokens": []
     }
 
     if address:
+        result["lastactive"] = int(address.lastactive.timestamp())
+        result["created"] = int(address.created.timestamp())
+
         for balance in address.balances:
             if balance.currency == CURRENCY:
                 result["balance"] = utils.round_amount(balance.balance)
+                result["received"] = utils.round_amount(balance.received)
+                result["sent"] = utils.round_amount(balance.sent)
 
             else:
                 result["tokens"].append({
                     "token": balance.currency,
-                    "balance": balance.balance,
-                    "received": balance.received,
-                    "sent": balance.sent
+                    "balance": utils.round_amount(balance.balance),
+                    "received": utils.round_amount(balance.received),
+                    "sent": utils.round_amount(balance.sent)
                 })
 
     return utils.response(result)
@@ -224,6 +232,29 @@ def balances(address):
 @blueprint.route("/token/<string:name>", methods=["GET"])
 @orm.db_session
 def token_info(name):
+    if name == "RPD":
+        supply = StatsService.get_by_key("supply").value
+
+        holders = Balance.select(
+            lambda b: b.currency == name
+        ).count(distinct=False)
+
+        return {
+            "category": "",
+            "crowdsale": False,
+            "data": "",
+            "divisible": True,
+            "holders": holders,
+            "issuer": "Rv3LUP88ndMLMdVkhTZiJPjosm4RhdVMMP",
+            "managed": False,
+            "name": "RPD",
+            "nft": False,
+            "subcategory": "",
+            "supply": utils.round_amount(supply),
+            "transaction": "094e1a19549054812eead969c70ab1bbf565bc2bd7a475273c037039a5bf6e24",
+            "url": "https://rapidsnetwork.io"
+        }
+
     if not (token := Token.get(name=name)):
         return utils.dead_response("Token not found"), 404
 

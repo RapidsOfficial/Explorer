@@ -179,3 +179,28 @@ class Transaction(db.Entity):
             "issued": issued,
             "transfers": transfers
         }
+
+    @property
+    def simple_display(self):
+        latest_blocks = Block.select().order_by(
+            orm.desc(Block.height)
+        ).first()
+
+        currency = CURRENCY
+        amount = 0
+
+        for vout in self.outputs:
+            if vout.currency == CURRENCY:
+                amount += vout.amount
+
+        for transfer in self.transfers:
+            amount = transfer.amount
+            currency = transfer.token.name
+
+        return {
+            "amount": round(amount, DECIMALS),
+            "confirmations": latest_blocks.height - self.block.height + 1,
+            "timestamp": int(self.block.created.timestamp()),
+            "txid": self.txid,
+            "token": currency
+        }
