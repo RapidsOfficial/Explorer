@@ -10,10 +10,11 @@ class Token(db.Entity):
     data = orm.Optional(str, nullable=True)
     url = orm.Optional(str, nullable=True)
     supply = orm.Required(float, default=0)
-    name = orm.Required(str, index=True)
+    ticker = orm.Required(str, index=True)
     divisible = orm.Required(bool)
     crowdsale = orm.Required(bool)
     managed = orm.Required(bool)
+    name = orm.Required(str)
 
     transaction = orm.Required("Transaction")
     issuer = orm.Required("Address")

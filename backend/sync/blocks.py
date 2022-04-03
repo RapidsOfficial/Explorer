@@ -170,6 +170,7 @@ def sync_blocks():
                                 "divisible": result["divisible"],
                                 "subcategory": result["subcategory"],
                                 "category": result["category"],
+                                "ticker": result["propertyticker"],
                                 "name": result["propertyname"],
                                 "data": result["data"],
                                 "url": result["url"],
@@ -188,13 +189,13 @@ def sync_blocks():
                                     "create": True
                                 })
 
-                                balance_issuer = BalanceService.get_by_currency(issuer, token.name)
+                                balance_issuer = BalanceService.get_by_currency(issuer, token.ticker)
                                 balance_issuer.balance += amount
                                 balance_issuer.received += amount
 
                         # Grant tokens
                         elif result["type_int"] == 55:
-                            if not (token := Token.get(name=result["propertyname"])):
+                            if not (token := Token.get(ticker=result["propertyticker"])):
                                 continue
 
                             sender = AddressService.get_by_address(
@@ -216,7 +217,7 @@ def sync_blocks():
                                 "create": True
                             })
 
-                            balance_receiver = BalanceService.get_by_currency(receiver, token.name)
+                            balance_receiver = BalanceService.get_by_currency(receiver, token.ticker)
                             balance_receiver.balance += amount
                             balance_receiver.received += amount
 
@@ -224,7 +225,7 @@ def sync_blocks():
 
                         # Revoke tokens
                         elif result["type_int"] == 56:
-                            if not (token := Token.get(name=result["propertyname"])):
+                            if not (token := Token.get(ticker=result["propertyticker"])):
                                 continue
 
                             sender = AddressService.get_by_address(
@@ -241,7 +242,7 @@ def sync_blocks():
                                 "burn": True
                             })
 
-                            balance_sender = BalanceService.get_by_currency(sender, token.name)
+                            balance_sender = BalanceService.get_by_currency(sender, token.ticker)
                             balance_sender.balance -= amount
                             balance_sender.sent += amount
 
@@ -249,7 +250,7 @@ def sync_blocks():
 
                         # Change issuer
                         elif result["type_int"] == 70:
-                            if not (token := Token.get(name=result["propertyname"])):
+                            if not (token := Token.get(ticker=result["propertyticker"])):
                                 continue
 
                             receiver = AddressService.get_by_address(
@@ -260,7 +261,7 @@ def sync_blocks():
 
                         # Simple send
                         elif result["type_int"] == 0:
-                            if not (token := Token.get(name=result["propertyname"])):
+                            if not (token := Token.get(ticker=result["propertyticker"])):
                                 continue
 
                             sender = AddressService.get_by_address(
@@ -282,16 +283,16 @@ def sync_blocks():
                                 "token": token
                             })
 
-                            balance_receiver = BalanceService.get_by_currency(receiver, token.name)
+                            balance_receiver = BalanceService.get_by_currency(receiver, token.ticker)
                             balance_receiver.balance += amount
                             balance_receiver.received += amount
 
-                            balance_sender = BalanceService.get_by_currency(sender, token.name)
+                            balance_sender = BalanceService.get_by_currency(sender, token.ticker)
                             balance_sender.balance -= amount
                             balance_sender.sent += amount
 
                             if crowdsale:
-                                if not (crowdsale := Token.get(name=result["purchasedpropertyname"])):
+                                if not (crowdsale := Token.get(ticker=result["purchasedpropertyticker"])):
                                     continue
 
                                 amount = float(result["purchasedtokens"])
@@ -305,7 +306,7 @@ def sync_blocks():
                                     "crowdsale": True
                                 })
 
-                                balance_sender_crowdsale = BalanceService.get_by_currency(sender, crowdsale.name)
+                                balance_sender_crowdsale = BalanceService.get_by_currency(sender, crowdsale.ticker)
                                 balance_sender_crowdsale.balance += amount
                                 balance_sender_crowdsale.received += amount
 
@@ -319,18 +320,18 @@ def sync_blocks():
                                 if len(trade_result["matches"]) == 0:
                                     continue
 
-                                if not (token_desired := Token.get(name=trade_result["propertynamedesired"])):
+                                if not (token_desired := Token.get(ticker=trade_result["propertytickerdesired"])):
                                     continue
 
-                                if not (token_sale := Token.get(name=trade_result["propertynameforsale"])):
+                                if not (token_sale := Token.get(ticker=trade_result["propertytickerforsale"])):
                                     continue
 
                                 sender = AddressService.get_by_address(
                                     result["sendingaddress"], True, created
                                 )
 
-                                balance_sender_desired = BalanceService.get_by_currency(sender, token_desired.name)
-                                balance_sender_sale = BalanceService.get_by_currency(sender, token_sale.name)
+                                balance_sender_desired = BalanceService.get_by_currency(sender, token_desired.ticker)
+                                balance_sender_sale = BalanceService.get_by_currency(sender, token_sale.ticker)
 
                                 for match in trade_result["matches"]:
                                     if match["block"] <= trade_result["block"]:
@@ -338,8 +339,8 @@ def sync_blocks():
                                             match["address"], True, created
                                         )
 
-                                        balance_receiver_desired = BalanceService.get_by_currency(receiver, token_desired.name)
-                                        balance_receiver_sale = BalanceService.get_by_currency(receiver, token_sale.name)
+                                        balance_receiver_desired = BalanceService.get_by_currency(receiver, token_desired.ticker)
+                                        balance_receiver_sale = BalanceService.get_by_currency(receiver, token_sale.ticker)
 
                                         amount_received = float(match["amountreceived"])
                                         amount_sold = float(match["amountsold"])

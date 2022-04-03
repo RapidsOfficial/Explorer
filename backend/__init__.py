@@ -9,10 +9,12 @@ def create_app():
 
     with app.app_context():
         from .frontend import frontend
+        from .payload import payload
         from .api import bulwark
         from .api import api
 
         app.register_blueprint(frontend)
+        app.register_blueprint(payload)
         app.register_blueprint(bulwark)
         app.register_blueprint(api)
 
