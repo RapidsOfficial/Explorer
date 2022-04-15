@@ -91,12 +91,12 @@ def search(args):
             })
 
         tokens = Token.select(
-            lambda t: t.name.startswith(args["query"])
+            lambda t: t.ticker.startswith(args["query"])
         ).limit(3)
 
         for token in tokens:
             result.append({
-                "result": token.name,
+                "result": token.ticker,
                 "type": "token"
             })
 
@@ -229,14 +229,14 @@ def balances(address):
 
     return utils.response(result)
 
-@blueprint.route("/token/<string:name>", methods=["GET"])
+@blueprint.route("/token/<string:ticker>", methods=["GET"])
 @orm.db_session
-def token_info(name):
-    if name == "RPD":
+def token_info(ticker):
+    if ticker == "RPD":
         supply = StatsService.get_by_key("supply").value
 
         holders = Balance.select(
-            lambda b: b.currency == name
+            lambda b: b.currency == ticker
         ).count(distinct=False)
 
         return {
@@ -247,7 +247,8 @@ def token_info(name):
             "holders": holders,
             "issuer": "Rv3LUP88ndMLMdVkhTZiJPjosm4RhdVMMP",
             "managed": False,
-            "name": "RPD",
+            "name": "Rapids",
+            "ticker": "RPD",
             "nft": False,
             "subcategory": "",
             "supply": utils.round_amount(supply),
@@ -255,16 +256,16 @@ def token_info(name):
             "url": "https://rapidsnetwork.io"
         }
 
-    if not (token := Token.get(name=name)):
+    if not (token := Token.get(ticker=ticker)):
         return utils.dead_response("Token not found"), 404
 
     return utils.response(token.display)
 
-@blueprint.route("/token/<string:name>/transfers", methods=["GET"])
+@blueprint.route("/token/<string:ticker>/transfers", methods=["GET"])
 @use_args(page_args, location="query")
 @orm.db_session
-def token_transactions(args, name):
-    if not (token := Token.get(name=name)):
+def token_transactions(args, ticker):
+    if not (token := Token.get(ticker=ticker)):
         return utils.dead_response("Token not found"), 404
 
     transfers = token.transfers.page(args["page"], pagesize=100)
@@ -282,7 +283,7 @@ def token_list(args):
     tokens = Token.select(lambda t: t.nft == args["nft"])
 
     if args["search"]:
-        tokens = tokens.filter(lambda t: args["search"] in t.name)
+        tokens = tokens.filter(lambda t: args["search"] in t.ticker)
 
     if args["category"]:
         tokens = tokens.filter(lambda t: t.category == args["category"])
@@ -318,13 +319,13 @@ def nft_list(args):
 
     return utils.response(result)
 
-@blueprint.route("/holders", defaults={"name": CURRENCY}, methods=["GET"])
-@blueprint.route("/holders/<string:name>", methods=["GET"])
+@blueprint.route("/holders", defaults={"ticker": CURRENCY}, methods=["GET"])
+@blueprint.route("/holders/<string:ticker>", methods=["GET"])
 @use_args(page_args, location="query")
 @orm.db_session
-def holders(args, name):
+def holders(args, ticker):
     holders = Balance.select(
-        lambda b: b.currency == name
+        lambda b: b.currency == ticker
     ).order_by(
         orm.desc(Balance.balance)
     ).page(args["page"], pagesize=100)
