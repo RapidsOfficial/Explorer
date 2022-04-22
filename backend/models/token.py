@@ -43,6 +43,7 @@ class Token(db.Entity):
             "managed": self.managed,
             "supply": self.supply,
             "holders": holders,
+            "ticker": self.ticker,
             "name": self.name,
             "data": self.data,
             "url": self.url,

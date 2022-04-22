@@ -280,7 +280,11 @@ def token_transactions(args, ticker):
 @use_args(filter_args, location="query")
 @orm.db_session
 def token_list(args):
-    tokens = Token.select(lambda t: t.nft == args["nft"])
+    tokens = Token.select()
+
+    # print(args["nft"])
+
+    # tokens = tokens.filter(lambda t: t.nft == args["nft"])
 
     if args["search"]:
         tokens = tokens.filter(lambda t: args["search"] in t.ticker)
