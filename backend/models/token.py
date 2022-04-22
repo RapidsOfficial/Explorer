@@ -65,8 +65,8 @@ class Transfer(db.Entity):
 
     def before_delete(self):
         # Grant tokens
-        if self.create:
-            self.token.supply -= self.amount
+        # if self.create:
+        #     self.token.supply -= self.amount
 
         # Revoke tokens
         if self.burn:
