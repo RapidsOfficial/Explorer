@@ -77,16 +77,18 @@ class Transfer(db.Entity):
                 address=self.receiver, currency=self.token.name
             )
 
-            balance_receiver.balance -= self.amount
-            balance_receiver.received -= self.amount
+            if balance_receiver:
+                balance_receiver.balance -= self.amount
+                balance_receiver.received -= self.amount
 
         if self.sender and not self.crowdsale:
             balance_sender = Balance.get(
                 address=self.sender, currency=self.token.name
             )
 
-            balance_sender.balance += self.amount
-            balance_sender.sent -= self.amount
+            if balance_sender:
+                balance_sender.balance += self.amount
+                balance_sender.sent -= self.amount
 
     @property
     def display(self):
