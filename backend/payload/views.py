@@ -1,6 +1,7 @@
 from .args import managed_args, crowdsale_args
 from webargs.flaskparser import use_args
 from .args import send_args, fixed_args
+from .args import multisig_args
 from .args import close_args
 from flask import Blueprint
 from .. import utils
@@ -84,5 +85,17 @@ def payload_revoke_managed(args):
     return utils.make_request(
         "createtokenpayloadrevoke", [
             args["ticker"], str(args["amount"])
+        ]
+    )
+
+@blueprint.route("/multisig", methods=["POST"])
+@use_args(multisig_args, location="json")
+@orm.db_session
+def payload_multisig(args):
+    return utils.make_request(
+        "createrawtokentxmultisig", [
+            "", args["payload"],
+            args["address"],
+            args["pubkey"]
         ]
     )

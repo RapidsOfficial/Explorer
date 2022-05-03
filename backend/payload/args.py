@@ -43,3 +43,9 @@ crowdsale_args = {
     "url": fields.Str(missing=""),
     "data": fields.Str(missing="")
 }
+
+multisig_args = {
+    "payload": fields.Str(required=True),
+    "address": fields.Str(required=True),
+    "pubkey": fields.Str(required=True)
+}
