@@ -283,7 +283,7 @@ def token_list(args):
     tokens = Token.select()
 
     if args["nft"]:
-        tokens = tokens.filter(lambda t: not t.divisible and t.supply == 1)
+        tokens = tokens.filter(lambda t: not t.divisible and not t.managed and t.supply == 1)
     else:
         tokens = tokens.filter(lambda t: t.supply > 1)
 
@@ -315,7 +315,7 @@ def token_list(args):
 @orm.db_session
 def nft_list(args):
     tokens = Token.select(
-        lambda t: t.nft is True
+        lambda t: not t.divisible and not t.managed and t.supply == 1
     ).page(args["page"], pagesize=100)
     result = []
 
