@@ -23,7 +23,7 @@ filter_args = {
     "category": fields.Str(missing=None),
     "search": fields.Str(missing=None),
     "issuer": fields.Str(missing=None),
-    # "nft": fields.Bool(missing=False)
+    "nft": fields.Bool(missing=False)
 }
 
 search_args = {

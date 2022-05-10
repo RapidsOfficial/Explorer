@@ -282,9 +282,10 @@ def token_transactions(args, ticker):
 def token_list(args):
     tokens = Token.select()
 
-    # print(args["nft"])
-
-    # tokens = tokens.filter(lambda t: t.nft == args["nft"])
+    if args["nft"]:
+        tokens = tokens.filter(lambda t: not t.divisible and t.supply == 1)
+    else:
+        tokens = tokens.filter(lambda t: t.supply > 1)
 
     if args["search"]:
         tokens = tokens.filter(lambda t: args["search"] in t.ticker)
