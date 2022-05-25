@@ -15,6 +15,7 @@ from datetime import datetime
 from pony import orm
 from .. import utils
 from . import parser
+from backend import constants
 
 @orm.db_session
 def rollback_blocks(height):
@@ -382,6 +383,39 @@ def sync_blocks():
                     balance_sender_crowdsale.balance += amount
                     balance_sender_crowdsale.received += amount
 
+            # Multi send
+            elif result["type_int"] == 5:
+                if not (token := Token.get(ticker=result["propertyticker"])):
+                    continue
+
+                sender = AddressService.get_by_address(
+                    result["sendingaddress"], True, created
+                )
+
+                amount = float(result["totalamount"])
+
+                balance_sender = BalanceService.get_by_currency(sender, token.ticker)
+                balance_sender.balance -= amount
+                balance_sender.sent += amount
+
+                for receiver_data in result["receivers"]:
+                    receiver_amount = float(receiver_data["amount"])
+                    receiver = AddressService.get_by_address(
+                        receiver_data["address"], True, created
+                    )
+
+                    Transfer(**{
+                        "amount": receiver_amount,
+                        "transaction": transaction,
+                        "receiver": receiver,
+                        "sender": sender,
+                        "token": token
+                    })
+
+                    balance_receiver = BalanceService.get_by_currency(receiver, token.ticker)
+                    balance_receiver.balance += receiver_amount
+                    balance_receiver.received += receiver_amount
+
             # Trade
             elif result["type_int"] == 25:
                 token_trade = utils.make_request("gettokentrade", [transaction.txid])
@@ -456,6 +490,45 @@ def sync_blocks():
 
                             balance_receiver_desired.balance -= amount_received
                             balance_receiver_desired.sent += amount_received
+
+
+            # Crowdsale payment RPD
+            elif result["type_int"] == 80:
+                sender = AddressService.get_by_address(
+                    result["sendingaddress"], True, created
+                )
+
+                receiver = AddressService.get_by_address(
+                    result["referenceaddress"], True, created
+                )
+
+                amount = float(result["amount"])
+
+                balance_receiver = BalanceService.get_by_currency(receiver, constants.CURRENCY)
+                balance_receiver.balance += amount
+                balance_receiver.received += amount
+
+                balance_sender = BalanceService.get_by_currency(sender, constants.CURRENCY)
+                balance_sender.balance -= amount
+                balance_sender.sent += amount
+
+                if not (crowdsale := Token.get(ticker=result["purchasedpropertyticker"])):
+                    continue
+
+                amount = float(result["purchasedtokens"])
+
+                Transfer(**{
+                    "amount": amount,
+                    "transaction": transaction,
+                    "receiver": sender,
+                    "sender": receiver,
+                    "token": crowdsale,
+                    "crowdsale": True
+                })
+
+                balance_sender_crowdsale = BalanceService.get_by_currency(sender, crowdsale.ticker)
+                balance_sender_crowdsale.balance += amount
+                balance_sender_crowdsale.received += amount
 
             # Unsupported token transaction type
             else:
