@@ -383,6 +383,8 @@ def sync_blocks():
                     balance_sender_crowdsale.balance += amount
                     balance_sender_crowdsale.received += amount
 
+                    crowdsale.supply += amount
+
             # Multi send
             elif result["type_int"] == 5:
                 if not (token := Token.get(ticker=result["propertyticker"])):
@@ -529,6 +531,8 @@ def sync_blocks():
                 balance_sender_crowdsale = BalanceService.get_by_currency(sender, crowdsale.ticker)
                 balance_sender_crowdsale.balance += amount
                 balance_sender_crowdsale.received += amount
+
+                crowdsale.supply += amount
 
             # Unsupported token transaction type
             else:
