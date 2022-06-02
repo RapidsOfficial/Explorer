@@ -162,7 +162,9 @@ class BalanceService(object):
 class OutputService(object):
     @classmethod
     def get_by_prev(cls, transaction, n):
-        return Output.get(transaction=transaction, n=n)
+        return Output.select(
+            lambda o: o.transaction == transaction and o.n == n
+        ).first()
 
     @classmethod
     def create(cls, transaction, amount, category, address, raw, n,
