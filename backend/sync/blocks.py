@@ -17,7 +17,7 @@ from .. import utils
 from . import parser
 from backend import constants
 
-@orm.db_session
+@orm.db_session(serializable=True)
 def rollback_blocks(height):
     latest_block = BlockService.latest_block()
 
@@ -32,7 +32,7 @@ def rollback_blocks(height):
 
     log_message("Finised rollback")
 
-@orm.db_session
+@orm.db_session(serializable=True)
 def sync_blocks():
     if not BlockService.latest_block():
         genesis_height = 0
@@ -118,8 +118,8 @@ def sync_blocks():
                 prev_tx = TransactionService.get_by_txid(vin["txid"])
                 prev_out = OutputService.get_by_prev(prev_tx, vin["vout"])
 
-                if not prev_out:
-                    continue
+                # if not prev_out:
+                #     continue
 
                 prev_out.address.transactions.add(transaction)
                 balance = BalanceService.get_by_currency(prev_out.address, prev_out.currency)

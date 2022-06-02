@@ -5,7 +5,7 @@ from .utils import log_message
 from pony import orm
 from . import utils
 
-@orm.db_session
+@orm.db_session(serializable=True)
 def sync_transactions():
     INTERVAL_KEY = "transactions"
 

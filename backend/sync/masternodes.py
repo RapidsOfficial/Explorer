@@ -6,7 +6,7 @@ from datetime import datetime
 from pony import orm
 from . import utils
 
-@orm.db_session
+@orm.db_session(serializable=True)
 def sync_masternodes():
     INTERVAL_KEY = "masternodes"
 
