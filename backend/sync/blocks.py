@@ -118,6 +118,9 @@ def sync_blocks():
                 prev_tx = TransactionService.get_by_txid(vin["txid"])
                 prev_out = OutputService.get_by_prev(prev_tx, vin["vout"])
 
+                if not prev_out:
+                    continue
+
                 prev_out.address.transactions.add(transaction)
                 balance = BalanceService.get_by_currency(prev_out.address, prev_out.currency)
                 prev_out.address.lastactive = created
