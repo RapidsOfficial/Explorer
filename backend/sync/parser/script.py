@@ -1,10 +1,9 @@
 from .util import unpack_le_uint16_from, unpack_le_uint32_from
+from ...constants import P2PKH_VERBYTE, P2SH_VERBYTES
 from .enum import Enumeration
 from .base58 import Base58
 from .hash import hash160
 
-P2PKH_VERBYTE = bytes.fromhex("3D")
-P2SH_VERBYTES = bytes.fromhex("06")
 
 class ScriptError(Exception):
     '''Exception used for script errors.'''

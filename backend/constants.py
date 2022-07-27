@@ -4,3 +4,11 @@ REDUCTION_HEIGHT = 1286000
 TOKEN_GENESIS = 1
 CURRENCY = "RPD"
 DECIMALS = 8
+
+# Mainnet
+# P2PKH_VERBYTE = bytes.fromhex("3D")
+# P2SH_VERBYTES = bytes.fromhex("06")
+
+# Regtest
+P2PKH_VERBYTE = bytes.fromhex("8B")
+P2SH_VERBYTES = bytes.fromhex("13")

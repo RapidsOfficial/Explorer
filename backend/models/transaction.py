@@ -22,6 +22,9 @@ class Transaction(db.Entity):
     addresses = orm.Set("Address")
     trades = orm.Set("Trade")
 
+    purchases = orm.Set("DexPurchase")
+    offers = orm.Set("DexOffer")
+
     @property
     def vin(self):
         inputs = self.inputs.order_by(-1)

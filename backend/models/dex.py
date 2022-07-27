@@ -8,6 +8,7 @@ class DexOffer(db.Entity):
     _table_ = "chain_dex_offers"
 
     feerequired = orm.Required(float, default=0)
+    transaction = orm.Required("Transaction")
     open = orm.Required(bool, default=True)
     filled = orm.Required(float, default=0)
     amount = orm.Required(float, default=0)
@@ -22,6 +23,7 @@ class DexOffer(db.Entity):
 class DexPurchase(db.Entity):
     _table_ = "chain_dex_purchases"
 
+    transaction = orm.Required("Transaction")
     amount = orm.Required(float, default=0)
     address = orm.Required("Address")
     created = orm.Required(datetime)
