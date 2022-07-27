@@ -1,11 +1,11 @@
 from ..constants import REDUCTION_HEIGHT, BURN_ADDRESS, TOKEN_GENESIS
+from ..models import Token, Transfer, Trade, DexOffer, DexPurchase
 from ..constants import CURRENCY, DECIMALS
 from ..services import TransactionService
 from .utils import log_block, log_message
 from ..methods.general import General
 from ..services import BalanceService
 from ..services import AddressService
-from ..models import Token, Transfer, Trade
 from ..services import OutputService
 from ..services import InputService
 from ..services import BlockService
@@ -221,11 +221,10 @@ def sync_blocks():
         if not transfer_data["error"] and block.height >= TOKEN_GENESIS:
             result = transfer_data["result"]
 
-            # ToDo: add dex handling logic
             if result["type"] == "DEx Purchase":
-                continue
+                result["type_int"] = None
 
-            elif not result["valid"]:
+            if "valid" in result and not result["valid"]:
                 continue
 
             # Create token
@@ -536,6 +535,79 @@ def sync_blocks():
                 balance_sender_crowdsale.received += amount
 
                 crowdsale.supply += amount
+
+            # DEX sell offer
+            elif result["type_int"] == 20:
+                seller = AddressService.get_by_address(
+                    result["sendingaddress"], True, created
+                )
+
+                offer_currency = result["propertyticker"]
+
+                prev_offer = DexOffer.select(
+                    lambda o: o.address == seller and o.currency == offer_currency
+                ).order_by(
+                    orm.desc(DexOffer.created)
+                ).first()
+
+                if prev_offer:
+                    prev_offer.open = False
+
+                if result["action"] != "cancel":
+                    amount = float(result["amount"])
+                    price = round(amount / float(result["rapidsdesired"]), 8)
+                    fee = float(result["feerequired"])
+
+                    offer = DexOffer(**{
+                        "feerequired": fee,
+                        "amount": amount,
+                        "price": price,
+                        "address": seller,
+                        "timelimit": result["timelimit"],
+                        "currency": offer_currency,
+                        "created": created
+                    })
+
+            # DEX accept
+            elif result["type_int"] == 22:
+                continue
+
+            # DEX purchase
+            elif result["type"] == "DEx Purchase":
+                buyer = AddressService.get_by_address(
+                    result["sendingaddress"], True, created
+                )
+
+                for purchase in result["purchases"]:
+                    if not purchase["valid"]:
+                        continue
+
+                    seller = AddressService.get_by_address(
+                        purchase["referenceaddress"], True, created
+                    )
+
+                    currency = purchase["propertyticker"]
+
+                    offer = DexOffer.select(
+                        lambda o: o.address == seller and o.currency == currency and o.open
+                    ).first()
+
+                    if not offer:
+                        continue
+
+                    amount_purchased = float(purchase["amountbought"])
+
+                    DexPurchase(**{
+                        "amount": amount_purchased,
+                        "created": created,
+                        "address": buyer,
+                        "offer": offer
+                    })
+
+                    offer.filled += amount_purchased
+
+                    if offer.filled >= offer.amount:
+                        offer.open = False
 
             # Unsupported token transaction type
             else:

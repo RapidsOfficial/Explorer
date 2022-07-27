@@ -23,6 +23,9 @@ class Address(db.Entity):
     outputs = orm.Set("Output")
     issued = orm.Set("Token")
 
+    dex_purchases = orm.Set("DexPurchase")
+    dex_offers = orm.Set("DexOffer")
+
     received = orm.Set("Transfer")
     sent = orm.Set("Transfer")
 
