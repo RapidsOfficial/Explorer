@@ -1,0 +1,934 @@
+{
+	"info": {
+		"_postman_id": "260c395d-e383-4cba-9994-a829a21c3a47",
+		"name": "Explorer v2",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "4772313"
+	},
+	"item": [
+		{
+			"name": "Token payload",
+			"item": [
+				{
+					"name": "Send",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"ticker\": \"RPDx\", \"amount\": 1}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://rapidsexplorer.io/v2/payload/send",
+							"protocol": "https",
+							"host": [
+								"rapidsexplorer",
+								"io"
+							],
+							"path": [
+								"v2",
+								"payload",
+								"send"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create fixed",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"amount\": 10000, \"divisible\": true, \"category\": \"\", \"subcategory\": \"\", \"ticker\": \"EXAMPLE\", \"name\": \"Example Token\", \"url\": \"http://example.com\", \"data\": \"\"}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://rapidsexplorer.io/v2/payload/create/fixed",
+							"protocol": "https",
+							"host": [
+								"rapidsexplorer",
+								"io"
+							],
+							"path": [
+								"v2",
+								"payload",
+								"create",
+								"fixed"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create managed",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"divisible\": true, \"category\": \"token\", \"subcategory\": \"example-token\", \"ticker\": \"EXAMPLE\", \"name\": \"Example Token\", \"url\": \"http://example.com\", \"data\": \"QmXbJ65ecQBRgdfwLRs5dLCxtGRwAcTcGev6VoU8sy6NRn\"}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://rapidsexplorer.io/v2/payload/create/managed",
+							"protocol": "https",
+							"host": [
+								"rapidsexplorer",
+								"io"
+							],
+							"path": [
+								"v2",
+								"payload",
+								"create",
+								"managed"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create crowdsale",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"divisible\": true, \"category\": \"token\", \"subcategory\": \"example-token\", \"ticker\": \"EXAMPLE\", \"name\": \"Example Crowdsale\", \"url\": \"http://example.com\", \"deadline\": 1749020915, \"issuerpercentage\": 25, \"earlybonus\": 0, \"tokensperunit\": 100}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://rapidsexplorer.io/v2/payload/create/crowdsale",
+							"protocol": "https",
+							"host": [
+								"rapidsexplorer",
+								"io"
+							],
+							"path": [
+								"v2",
+								"payload",
+								"create",
+								"crowdsale"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Close crowdsale",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"ticker\": \"EXAMPLE\"}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://rapidsexplorer.io/v2/payload/crowdsale/close",
+							"protocol": "https",
+							"host": [
+								"rapidsexplorer",
+								"io"
+							],
+							"path": [
+								"v2",
+								"payload",
+								"crowdsale",
+								"close"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Managed grant",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"ticker\": \"RPDx\", \"amount\": 1000}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://rapidsexplorer.io/v2/payload/managed/grant",
+							"protocol": "https",
+							"host": [
+								"rapidsexplorer",
+								"io"
+							],
+							"path": [
+								"v2",
+								"payload",
+								"managed",
+								"grant"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Managed revoke",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"ticker\": \"RPDx\", \"amount\": 1000}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://rapidsexplorer.io/v2/payload/managed/revoke",
+							"protocol": "https",
+							"host": [
+								"rapidsexplorer",
+								"io"
+							],
+							"path": [
+								"v2",
+								"payload",
+								"managed",
+								"revoke"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Multisig (Class B)",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"payload\": \"00000032010002000000006c6f6e672d63617465676f7279006c6f6e672d73756263617465676f7279004578616d706c6520546f6b656e004558414d504c4500687474703a2f2f6c6f6e676578616d706c65776562736974652e636f6d000000000000e8d4a5100000\", \"address\": \"RZbLmmPXkgj4kXQUo9Si1droHXpwSpFKak\", \"pubkey\": \"0254e45b8d8cfd145184fed369da077700828ce95fe7b0e400aea5bffe62c5a262\"}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://rapidsexplorer.io/v2/payload/multisig",
+							"protocol": "https",
+							"host": [
+								"rapidsexplorer",
+								"io"
+							],
+							"path": [
+								"v2",
+								"payload",
+								"multisig"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Dex sell",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"amountforsale\": 1, \"amountdesired\": 1, \"minacceptfee\": 0.0001, \"paymentwindow\": 100, \"ticker\": \"USDT\", \"action\": \"new\"}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://0.0.0.0:4321/v2/payload/dex/sell",
+							"protocol": "http",
+							"host": [
+								"0",
+								"0",
+								"0",
+								"0"
+							],
+							"port": "4321",
+							"path": [
+								"v2",
+								"payload",
+								"dex",
+								"sell"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Dex accept",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"amount\": 1, \"ticker\": \"USDT\"}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://0.0.0.0:4321/v2/payload/dex/accept",
+							"protocol": "http",
+							"host": [
+								"0",
+								"0",
+								"0",
+								"0"
+							],
+							"port": "4321",
+							"path": [
+								"v2",
+								"payload",
+								"dex",
+								"accept"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Trade create",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"tickerforsale\": \"USDT\", \"tickerdesired\": \"BTC\", \"amountforsale\": 1, \"amountdesired\": 1}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://rapidsexplorer.io/v2/payload/trade/create",
+							"protocol": "https",
+							"host": [
+								"rapidsexplorer",
+								"io"
+							],
+							"path": [
+								"v2",
+								"payload",
+								"trade",
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Trade cancel by price",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"tickerforsale\": \"USDT\", \"tickerdesired\": \"BTC\", \"amountforsale\": 1, \"amountdesired\": 1}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://rapidsexplorer.io/v2/payload/trade/cancel/price",
+							"protocol": "https",
+							"host": [
+								"rapidsexplorer",
+								"io"
+							],
+							"path": [
+								"v2",
+								"payload",
+								"trade",
+								"cancel",
+								"price"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Trade cancel by pair",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"tickerforsale\": \"USDT\", \"tickerdesired\": \"BTC\"}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://rapidsexplorer.io/v2/payload/trade/cancel/pair",
+							"protocol": "https",
+							"host": [
+								"rapidsexplorer",
+								"io"
+							],
+							"path": [
+								"v2",
+								"payload",
+								"trade",
+								"cancel",
+								"pair"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Trade cancel all",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "text"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://rapidsexplorer.io/v2/payload/trade/cancel/all",
+							"protocol": "https",
+							"host": [
+								"rapidsexplorer",
+								"io"
+							],
+							"path": [
+								"v2",
+								"payload",
+								"trade",
+								"cancel",
+								"all"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Latest block",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://rapidsexplorer.io/v2/latest",
+					"protocol": "https",
+					"host": [
+						"rapidsexplorer",
+						"io"
+					],
+					"path": [
+						"v2",
+						"latest"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Transactions",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://rapidsexplorer.io/v2/transactions?page=1",
+					"protocol": "https",
+					"host": [
+						"rapidsexplorer",
+						"io"
+					],
+					"path": [
+						"v2",
+						"transactions"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Blocks",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://rapidsexplorer.io/v2/blocks?page=1",
+					"protocol": "https",
+					"host": [
+						"rapidsexplorer",
+						"io"
+					],
+					"path": [
+						"v2",
+						"blocks"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Block info",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://rapidsexplorer.io/v2/block/53135cdaca4e82bd22baad4726ec38572b1d522fed921a4400710d1f5b88e30f",
+					"protocol": "https",
+					"host": [
+						"rapidsexplorer",
+						"io"
+					],
+					"path": [
+						"v2",
+						"block",
+						"53135cdaca4e82bd22baad4726ec38572b1d522fed921a4400710d1f5b88e30f"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Block transactions",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://rapidsexplorer.io/v2/block/53135cdaca4e82bd22baad4726ec38572b1d522fed921a4400710d1f5b88e30f/transactions?page=1",
+					"protocol": "https",
+					"host": [
+						"rapidsexplorer",
+						"io"
+					],
+					"path": [
+						"v2",
+						"block",
+						"53135cdaca4e82bd22baad4726ec38572b1d522fed921a4400710d1f5b88e30f",
+						"transactions"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Transaction info",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://rapidsexplorer.io/v2/transaction/4161b2a38abab30cb52811a0b1776e2f52c70ab4111ad2e4f7b47e5d3a55b285",
+					"protocol": "https",
+					"host": [
+						"rapidsexplorer",
+						"io"
+					],
+					"path": [
+						"v2",
+						"transaction",
+						"4161b2a38abab30cb52811a0b1776e2f52c70ab4111ad2e4f7b47e5d3a55b285"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Transaction info Copy",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://rapidsexplorer.io/v2/history/RvciFWrJbeo5j7N3yQVEqaMvJDwWXuSven?page=1",
+					"protocol": "https",
+					"host": [
+						"rapidsexplorer",
+						"io"
+					],
+					"path": [
+						"v2",
+						"history",
+						"RvciFWrJbeo5j7N3yQVEqaMvJDwWXuSven"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Address balance",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://rapidsexplorer.io/v2/balance/RvciFWrJbeo5j7N3yQVEqaMvJDwWXuSven",
+					"protocol": "https",
+					"host": [
+						"rapidsexplorer",
+						"io"
+					],
+					"path": [
+						"v2",
+						"balance",
+						"RvciFWrJbeo5j7N3yQVEqaMvJDwWXuSven"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Transactions chart",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://rapidsexplorer.io/v2/chart/transactions",
+					"protocol": "https",
+					"host": [
+						"rapidsexplorer",
+						"io"
+					],
+					"path": [
+						"v2",
+						"chart",
+						"transactions"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Masternodes chart",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://rapidsexplorer.io/v2/chart/masternodes",
+					"protocol": "https",
+					"host": [
+						"rapidsexplorer",
+						"io"
+					],
+					"path": [
+						"v2",
+						"chart",
+						"masternodes"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Token info",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://rapidsexplorer.io/v2/token/RPDx",
+					"protocol": "https",
+					"host": [
+						"rapidsexplorer",
+						"io"
+					],
+					"path": [
+						"v2",
+						"token",
+						"RPDx"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Token transfers",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://rapidsexplorer.io/v2/token/RPDx/transfers?page=1",
+					"protocol": "https",
+					"host": [
+						"rapidsexplorer",
+						"io"
+					],
+					"path": [
+						"v2",
+						"token",
+						"RPDx",
+						"transfers"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Tokens",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://rapidsexplorer.io/v2/tokens?page=1",
+					"protocol": "https",
+					"host": [
+						"rapidsexplorer",
+						"io"
+					],
+					"path": [
+						"v2",
+						"tokens"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "NFTs",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://rapidsexplorer.io/v2/nft?page=1",
+					"protocol": "https",
+					"host": [
+						"rapidsexplorer",
+						"io"
+					],
+					"path": [
+						"v2",
+						"nft"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Holders",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://rapidsexplorer.io/v2/holders/RPDx?page=1",
+					"protocol": "https",
+					"host": [
+						"rapidsexplorer",
+						"io"
+					],
+					"path": [
+						"v2",
+						"holders",
+						"RPDx"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DEX offers",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://rapidsexplorer.io/v2/trade/offers?open=false&page=1&ticker=USDT",
+					"protocol": "https",
+					"host": [
+						"rapidsexplorer",
+						"io"
+					],
+					"path": [
+						"v2",
+						"trade",
+						"offers"
+					],
+					"query": [
+						{
+							"key": "open",
+							"value": "false"
+						},
+						{
+							"key": "page",
+							"value": "1"
+						},
+						{
+							"key": "ticker",
+							"value": "USDT"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DEX offer info",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://rapidsexplorer.io/v2/trade/offer/c55a1208a8fb0eda125bdf1ec788ffd78328824774558d7daf65d6032068d643",
+					"protocol": "https",
+					"host": [
+						"rapidsexplorer",
+						"io"
+					],
+					"path": [
+						"v2",
+						"trade",
+						"offer",
+						"c55a1208a8fb0eda125bdf1ec788ffd78328824774558d7daf65d6032068d643"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Trade orders",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://rapidsexplorer.io/v2/trade/orders?open=false&ticker=USDT&desired=BTC&page=1",
+					"protocol": "https",
+					"host": [
+						"rapidsexplorer",
+						"io"
+					],
+					"path": [
+						"v2",
+						"trade",
+						"orders"
+					],
+					"query": [
+						{
+							"key": "open",
+							"value": "false"
+						},
+						{
+							"key": "ticker",
+							"value": "USDT"
+						},
+						{
+							"key": "desired",
+							"value": "BTC"
+						},
+						{
+							"key": "page",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Trade order info",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://rapidsexplorer.io/v2/trade/order/84aa4ff52071334e691a49e0bb56f695397cdccb8cea14ff1af7385cf6c3e1ba",
+					"protocol": "https",
+					"host": [
+						"rapidsexplorer",
+						"io"
+					],
+					"path": [
+						"v2",
+						"trade",
+						"order",
+						"84aa4ff52071334e691a49e0bb56f695397cdccb8cea14ff1af7385cf6c3e1ba"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

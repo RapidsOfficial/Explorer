@@ -1,5 +1,40 @@
 from webargs import fields, validate
 
+trade_cancel_pair_args = {
+    "tickerforsale": fields.Str(required=True),
+    "tickerdesired": fields.Str(required=True),
+}
+
+trade_args = {
+    "tickerforsale": fields.Str(required=True),
+    "tickerdesired": fields.Str(required=True),
+    "amountforsale": fields.Float(
+        required=True, validate=validate.Range(min=0)
+    ),
+    "amountdesired": fields.Float(
+        required=True, validate=validate.Range(min=0)
+    ),
+}
+
+dex_sell_args = {
+    "amountforsale": fields.Float(
+        required=True, validate=validate.Range(min=0)
+    ),
+    "amountdesired": fields.Float(
+        required=True, validate=validate.Range(min=0)
+    ),
+    "minacceptfee": fields.Float(
+        required=True, validate=validate.Range(min=0)
+    ),
+    "paymentwindow": fields.Int(
+        required=True, validate=validate.Range(min=0, max=100)
+    ),
+    "ticker": fields.Str(required=True),
+    "action": fields.Str(required=True, validate=lambda f: f in [
+        "new", "update", "cancel"
+    ])
+}
+
 close_args = {
     "ticker": fields.Str(required=True)
 }

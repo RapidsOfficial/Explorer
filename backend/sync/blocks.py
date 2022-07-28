@@ -529,7 +529,7 @@ def process_token_transactions(transfer_data, created, transaction, height):
 
     # Unsupported token transaction type
     else:
-        raise
+        return
 
 @orm.db_session(serializable=True)
 def rollback_blocks(height):

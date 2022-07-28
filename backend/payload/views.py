@@ -1,7 +1,10 @@
 from .args import managed_args, crowdsale_args
 from webargs.flaskparser import use_args
+from .args import trade_cancel_pair_args
 from .args import send_args, fixed_args
 from .args import multisig_args
+from .args import dex_sell_args
+from .args import trade_args
 from .args import close_args
 from flask import Blueprint
 from .. import utils
@@ -99,3 +102,67 @@ def payload_multisig(args):
             args["pubkey"]
         ]
     )
+
+@blueprint.route("/dex/sell", methods=["POST"])
+@use_args(dex_sell_args, location="json")
+@orm.db_session
+def payload_dex_send(args):
+    action = ["new", "update", "cancel"].index(args["action"]) + 1
+
+    return utils.make_request(
+        "createtokenpayloaddexsell", [
+            args["ticker"], str(args["amountforsale"]),
+            str(args["amountdesired"]), args["paymentwindow"],
+            str(args["minacceptfee"]), action
+        ]
+    )
+
+@blueprint.route("/dex/accept", methods=["POST"])
+@use_args(send_args, location="json")
+@orm.db_session
+def payload_dex_accept(args):
+    return utils.make_request(
+        "createtokenpayloaddexaccept", [
+            args["ticker"], str(args["amount"])
+        ]
+    )
+
+@blueprint.route("/trade/create", methods=["POST"])
+@use_args(trade_args, location="json")
+@orm.db_session
+def payload_trade_create(args):
+    return utils.make_request(
+        "createtokenpayloadtrade", [
+            args["tickerforsale"], str(args["amountforsale"]),
+            args["tickerdesired"], str(args["amountdesired"])
+        ]
+    )
+
+@blueprint.route("/trade/cancel/price", methods=["POST"])
+@use_args(trade_args, location="json")
+@orm.db_session
+def payload_trade_cancel_price(args):
+    return utils.make_request(
+        "createtokenpayloadcanceltradesbyprice", [
+            args["tickerforsale"], str(args["amountforsale"]),
+            args["tickerdesired"], str(args["amountdesired"])
+        ]
+    )
+
+@blueprint.route("/trade/cancel/pair", methods=["POST"])
+@use_args(trade_cancel_pair_args, location="json")
+@orm.db_session
+def payload_trade_cancel_pair(args):
+    return utils.make_request(
+        "createtokenpayloadcanceltradesbypair", [
+            args["tickerforsale"], args["tickerdesired"]
+        ]
+    )
+
+@blueprint.route("/trade/cancel/all", methods=["POST"])
+@orm.db_session
+def payload_trade_cancel_all():
+    return utils.make_request(
+        "createtokenpayloadcancelalltrades", [1]
+    )
+
