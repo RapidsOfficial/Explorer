@@ -1,8 +1,9 @@
 from .balance import Balance, Input, Output
-from .token import Token, Transfer, Trade
+from .trade import TradeOrder, TradeMatch
 from .dex import DexOffer, DexPurchase
 from .transaction import Transaction
 from .masternode import Masternode
+from .token import Token, Transfer
 from .peer import Peer, Location
 from .interval import Interval
 from .address import Address

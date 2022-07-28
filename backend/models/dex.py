@@ -1,6 +1,4 @@
 from datetime import datetime
-
-from backend.utils import amount
 from .base import db
 from pony import orm
 

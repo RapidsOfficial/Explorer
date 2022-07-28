@@ -20,7 +20,8 @@ class Transaction(db.Entity):
 
     transfers = orm.Set("Transfer")
     addresses = orm.Set("Address")
-    trades = orm.Set("Trade")
+    orders = orm.Set("TradeOrder")
+    # trades = orm.Set("Trade")
 
     purchases = orm.Set("DexPurchase")
     offers = orm.Set("DexOffer")

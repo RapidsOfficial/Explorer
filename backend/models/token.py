@@ -20,8 +20,8 @@ class Token(db.Entity):
     issuer = orm.Required("Address")
     transfers = orm.Set("Transfer")
 
-    trades_desierd = orm.Set("Trade", reverse="token_desired")
-    trades_sold = orm.Set("Trade", reverse="token_sale")
+    # trades_desierd = orm.Set("Trade", reverse="token_desired")
+    # trades_sold = orm.Set("Trade", reverse="token_sale")
 
     @property
     def nft(self):
@@ -108,15 +108,15 @@ class Transfer(db.Entity):
             "sender": sender
         }
 
-class Trade(db.Entity):
-    _table_ = "chain_trades"
+# class Trade(db.Entity):
+#     _table_ = "chain_trades"
 
-    receiver = orm.Optional("Address", reverse="trades_received")
-    sender = orm.Optional("Address", reverse="trades_sent")
-    transaction = orm.Required("Transaction")
+#     receiver = orm.Optional("Address", reverse="trades_received")
+#     sender = orm.Optional("Address", reverse="trades_sent")
+#     transaction = orm.Required("Transaction")
 
-    token_desired = orm.Required("Token", reverse="trades_desierd")
-    token_sale = orm.Required("Token", reverse="trades_sold")
+#     token_desired = orm.Required("Token", reverse="trades_desierd")
+#     token_sale = orm.Required("Token", reverse="trades_sold")
 
-    amount_received = orm.Required(float, default=0)
-    amount_sold = orm.Required(float, default=0)
+#     amount_received = orm.Required(float, default=0)
+#     amount_sold = orm.Required(float, default=0)

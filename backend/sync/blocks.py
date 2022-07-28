@@ -1,12 +1,14 @@
-from ..constants import REDUCTION_HEIGHT, BURN_ADDRESS, TOKEN_GENESIS
-from ..models import Token, Transfer, Trade, DexOffer, DexPurchase
-from ..constants import CURRENCY, DECIMALS
-from ..services import TransactionService
+from ..constants import CURRENCY, DECIMALS, BURN_ADDRESS
+from ..constants import REDUCTION_HEIGHT, TOKEN_GENESIS
+from ..models import TradeOrder, TradeMatch
+from ..models import DexOffer, DexPurchase
 from .utils import log_block, log_message
+from ..services import TransactionService
 from ..methods.general import General
 from ..services import BalanceService
 from ..services import AddressService
 from ..services import OutputService
+from ..models import Token, Transfer
 from ..services import InputService
 from ..services import BlockService
 from ..services import StatsService
@@ -16,7 +18,7 @@ from pony import orm
 from .. import utils
 from . import parser
 
-def process_token_transactions(transfer_data, created, transaction):
+def process_token_transactions(transfer_data, created, transaction, height):
     result = transfer_data["result"]
 
     if result["type"] == "DEx Purchase":
@@ -220,54 +222,84 @@ def process_token_transactions(transfer_data, created, transaction):
 
     # Trade
     elif result["type_int"] == 25:
+        currency_desired = result["propertytickerdesired"]
+        currency_sale = result["propertytickerforsale"]
+
+        amount_desired = round(float(result["amountdesired"]), 8)
+        amount_sale = round(float(result["amountforsale"]), 8)
+
+        seller = AddressService.get_by_address(
+            result["sendingaddress"], True, created
+        )
+
+        balance_seller_desired = BalanceService.get_by_currency(
+            seller, currency_desired
+        )
+
+        balance_seller_sale = BalanceService.get_by_currency(
+            seller, currency_desired
+        )
+
+        trade_sell = TradeOrder(**{
+            "currencydesired": currency_desired,
+            "currencyforsale": currency_sale,
+            "amountdesired": amount_desired,
+            "amountforsale": amount_sale,
+            "transaction": transaction,
+            "txid": transaction.txid,
+            "address": seller
+        })
+
         token_trade = utils.make_request("gettokentrade", [transaction.txid])
 
         if not token_trade["error"] and token_trade["result"]["valid"]:
             trade_result = token_trade["result"]
 
-            if len(trade_result["matches"]) == 0:
-                return
-
-            if not (token_desired := Token.get(ticker=trade_result["propertytickerdesired"])):
-                return
-
-            if not (token_sale := Token.get(ticker=trade_result["propertytickerforsale"])):
-                return
-
-            sender = AddressService.get_by_address(
-                result["sendingaddress"], True, created
-            )
-
-            balance_sender_desired = BalanceService.get_by_currency(sender, token_desired.ticker)
-            balance_sender_sale = BalanceService.get_by_currency(sender, token_sale.ticker)
-
             for match in trade_result["matches"]:
-                if match["block"] <= trade_result["block"]:
+                if height >= match["block"]:
                     receiver = AddressService.get_by_address(
                         match["address"], True, created
                     )
 
-                    balance_receiver_desired = BalanceService.get_by_currency(receiver, token_desired.ticker)
-                    balance_receiver_sale = BalanceService.get_by_currency(receiver, token_sale.ticker)
+                    balance_receiver_desired = BalanceService.get_by_currency(
+                        receiver, currency_desired
+                    )
+
+                    balance_receiver_sale = BalanceService.get_by_currency(
+                        receiver, currency_desired
+                    )
+
+                    trade_buy = TradeOrder.select(
+                        lambda t: t.txid == match["txid"]
+                    ).first()
 
                     amount_received = float(match["amountreceived"])
                     amount_sold = float(match["amountsold"])
 
-                    Trade(**{
-                        "receiver": receiver,
-                        "sender": sender,
-                        "transaction": transaction,
-                        "token_desired": token_desired,
-                        "token_sale": token_sale,
-                        "amount_received": amount_received,
-                        "amount_sold": amount_sold
+                    TradeMatch(**{
+                        "amountreceived": amount_received,
+                        "order_seller": trade_sell,
+                        "amountsold": amount_sold,
+                        "order_buyer": trade_buy
                     })
 
+                    trade_sell.filled += amount_received
+                    trade_buy.filled += amount_received
+
+                    if trade_buy.filled >= trade_buy.amountforsale:
+                        trade_buy.open = False
+
+                    if trade_sell.filled >= trade_sell.amountforsale:
+                        trade_sell.open = False
+
+                    token_desired = Token.get(ticker=currency_desired)
+                    token_sale = Token.get(ticker=currency_sale)
+                    
                     Transfer(**{
                         "amount": amount_sold,
                         "transaction": transaction,
                         "receiver": receiver,
-                        "sender": sender,
+                        "sender": seller,
                         "token": token_sale,
                         "trade": True
                     })
@@ -275,24 +307,23 @@ def process_token_transactions(transfer_data, created, transaction):
                     balance_receiver_sale.balance += amount_sold
                     balance_receiver_sale.received += amount_sold
 
-                    balance_sender_sale.balance -= amount_sold
-                    balance_sender_sale.sent += amount_sold
+                    balance_seller_sale.balance -= amount_sold
+                    balance_seller_sale.sent += amount_sold
 
                     Transfer(**{
                         "amount": amount_received,
                         "transaction": transaction,
-                        "receiver": sender,
+                        "receiver": seller,
                         "sender": receiver,
                         "token": token_desired,
                         "trade": True
                     })
 
-                    balance_sender_desired.balance += amount_received
-                    balance_sender_desired.received += amount_received
+                    balance_seller_desired.balance += amount_received
+                    balance_seller_desired.received += amount_received
 
                     balance_receiver_desired.balance -= amount_received
                     balance_receiver_desired.sent += amount_received
-
 
     # Crowdsale payment RPD
     elif result["type_int"] == 80:
@@ -638,7 +669,9 @@ def sync_blocks():
 
             # Create token
             if not transfer_data["error"] and block.height >= TOKEN_GENESIS:
-                process_token_transactions(transfer_data, created, transaction)
+                process_token_transactions(
+                    transfer_data, created, transaction, height
+                )
 
             total_transactions += 1
 
