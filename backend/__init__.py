@@ -11,11 +11,13 @@ def create_app():
         from .frontend import frontend
         from .payload import payload
         from .api import bulwark
+        from .api import trade
         from .api import api
 
         app.register_blueprint(frontend)
         app.register_blueprint(payload)
         app.register_blueprint(bulwark)
+        app.register_blueprint(trade)
         app.register_blueprint(api)
 
         @app.template_filter("amount")

@@ -1,4 +1,18 @@
+from email.policy import default
 from webargs import fields, validate
+
+offers_args = {
+    "page": fields.Int(missing=1, validate=validate.Range(min=1)),
+    "ticker": fields.Str(missing=None),
+    "open": fields.Bool(missing=True)
+}
+
+orders_args = {
+    "page": fields.Int(missing=1, validate=validate.Range(min=1)),
+    "desired": fields.Str(missing=None),
+    "ticker": fields.Str(missing=None),
+    "open": fields.Bool(missing=True)
+}
 
 page_args = {
     "page": fields.Int(missing=1, validate=validate.Range(min=1))

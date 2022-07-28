@@ -247,6 +247,7 @@ def process_token_transactions(transfer_data, created, transaction, height):
             "amountforsale": amount_sale,
             "transaction": transaction,
             "txid": transaction.txid,
+            "created": created,
             "address": seller
         })
 
@@ -280,7 +281,8 @@ def process_token_transactions(transfer_data, created, transaction, height):
                         "amountreceived": amount_received,
                         "order_seller": trade_sell,
                         "amountsold": amount_sold,
-                        "order_buyer": trade_buy
+                        "order_buyer": trade_buy,
+                        "created": created
                     })
 
                     trade_sell.filled += amount_received
@@ -468,9 +470,66 @@ def process_token_transactions(transfer_data, created, transaction, height):
             balance_buyer.balance -= amount_paid
             balance_buyer.sent -= amount_paid
 
+    # DEX cancel-price
+    elif result["type_int"] == 26:
+        currency_desired = result["propertytickerdesired"]
+        currency_sale = result["propertytickerforsale"]
+
+        amount_desired = round(float(result["amountdesired"]), 8)
+        amount_sale = round(float(result["amountforsale"]), 8)
+
+        seller = AddressService.get_by_address(
+            result["sendingaddress"], True, created
+        )
+
+        orders = TradeOrder.select(
+            lambda t: t.amountforsale == amount_sale
+            and t.amountdesired == amount_desired
+            and t.currencyforsale == currency_sale
+            and t.currencydesired == currency_desired
+            and t.address == seller
+            and t.open == True
+        )
+
+        for order in orders:
+            order.open = False
+
+    # MetaDEx cancel-pair
+    elif result["type_int"] == 27:
+        currency_desired = result["propertytickerdesired"]
+        currency_sale = result["propertytickerforsale"]
+
+        seller = AddressService.get_by_address(
+            result["sendingaddress"], True, created
+        )
+
+        orders = TradeOrder.select(
+            lambda t: t.currencyforsale == currency_sale
+            and t.currencydesired == currency_desired
+            and t.address == seller
+            and t.open == True
+        )
+
+        for order in orders:
+            order.open = False
+
+    # MetaDEx cancel-ecosystem
+    elif result["type_int"] == 28 and result["ecosystem"] == "main":
+        seller = AddressService.get_by_address(
+            result["sendingaddress"], True, created
+        )
+
+        orders = TradeOrder.select(
+            lambda t: t.address == seller
+            and t.open == True
+        )
+
+        for order in orders:
+            order.open = False
+
     # Unsupported token transaction type
     else:
-        return
+        raise
 
 @orm.db_session(serializable=True)
 def rollback_blocks(height):
