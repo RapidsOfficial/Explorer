@@ -533,8 +533,8 @@ def process_token_transactions(transfer_data, created, transaction, height):
 
 # @orm.db_session(serializable=True)
 def rollback_blocks(height):
-    with orm.db_session:
-        while True:
+    while True:
+        with orm.db_session:
             latest_block = BlockService.latest_block()
             counter = 0
 
