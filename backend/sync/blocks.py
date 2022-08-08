@@ -531,18 +531,26 @@ def process_token_transactions(transfer_data, created, transaction, height):
     else:
         return
 
-@orm.db_session(serializable=True)
+# @orm.db_session(serializable=True)
 def rollback_blocks(height):
-    latest_block = BlockService.latest_block()
+    with orm.db_session:
+        while True:
+            latest_block = BlockService.latest_block()
+            counter = 0
 
-    while latest_block.height >= height:
-        log_block("Found reorg", latest_block)
+            while latest_block.height >= height:
+                log_block("Found reorg", latest_block)
 
-        reorg_block = latest_block
-        latest_block = reorg_block.previous_block
+                reorg_block = latest_block
+                latest_block = reorg_block.previous_block
 
-        reorg_block.delete()
-        orm.commit()
+                reorg_block.delete()
+                orm.commit()
+
+                counter += 1
+
+                if counter >= 10:
+                    break
 
     log_message("Finised rollback")
 

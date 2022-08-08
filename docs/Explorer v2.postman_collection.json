@@ -270,15 +270,12 @@
 							}
 						},
 						"url": {
-							"raw": "http://0.0.0.0:4321/v2/payload/dex/sell",
-							"protocol": "http",
+							"raw": "https://rapidsexplorer.io/v2/payload/dex/sell",
+							"protocol": "https",
 							"host": [
-								"0",
-								"0",
-								"0",
-								"0"
+								"rapidsexplorer",
+								"io"
 							],
-							"port": "4321",
 							"path": [
 								"v2",
 								"payload",
@@ -304,15 +301,12 @@
 							}
 						},
 						"url": {
-							"raw": "http://0.0.0.0:4321/v2/payload/dex/accept",
-							"protocol": "http",
+							"raw": "https://rapidsexplorer.io/v2/payload/dex/accept",
+							"protocol": "https",
 							"host": [
-								"0",
-								"0",
-								"0",
-								"0"
+								"rapidsexplorer",
+								"io"
 							],
-							"port": "4321",
 							"path": [
 								"v2",
 								"payload",
