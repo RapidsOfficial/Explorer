@@ -543,7 +543,7 @@ def rollback_blocks(height):
             while latest_block.height >= height:
                 log_block("Found reorg", latest_block)
 
-                if latest_block.height >= height:
+                if latest_block.height == height:
                     doing = False
 
                 reorg_block = latest_block
