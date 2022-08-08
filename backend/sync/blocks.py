@@ -533,13 +533,18 @@ def process_token_transactions(transfer_data, created, transaction, height):
 
 # @orm.db_session(serializable=True)
 def rollback_blocks(height):
-    while True:
+    doing = True
+
+    while doing:
         with orm.db_session:
             latest_block = BlockService.latest_block()
             counter = 0
 
             while latest_block.height >= height:
                 log_block("Found reorg", latest_block)
+
+                if latest_block.height >= height:
+                    doing = False
 
                 reorg_block = latest_block
                 latest_block = reorg_block.previous_block
