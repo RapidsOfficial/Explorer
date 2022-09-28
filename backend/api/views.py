@@ -345,3 +345,20 @@ def holders(args, ticker):
         })
 
     return utils.response(result)
+
+@blueprint.route("/username/<string:username>", methods=["GET"])
+@orm.db_session
+def username_owner(username):
+    if ".rpd" not in username:
+        return utils.dead_response("Invalid username")
+
+    holder = Balance.select(
+        lambda b: b.currency == username and b.balance > 0
+    ).first()
+
+    if not holder:
+        return utils.dead_response("Username not found")
+
+    return utils.response({
+        "address": holder.address.address
+    })
