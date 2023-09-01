@@ -79,7 +79,7 @@ class TransactionService(object):
     @classmethod
     def get_by_txid(cls, txid):
         # return Transaction.get(txid=txid)
-        return Transaction.filter(lambda t: t.txid == txid).first()
+        return Transaction.select(lambda t: t.txid == txid).first()
 
     @classmethod
     def create(
